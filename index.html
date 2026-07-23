@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Guchhi - Wild-Foraged Foods</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=Work+Sans:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-dim": "#dbdad7",
+              "secondary-fixed": "#ffdcbd",
+              "on-tertiary-container": "#839886",
+              "surface-container-lowest": "#ffffff",
+              background: "#faf9f6",
+              "on-tertiary": "#ffffff",
+              "on-background": "#1a1c1a",
+              "on-error-container": "#93000a",
+              "inverse-surface": "#2f312f",
+              "on-tertiary-fixed": "#0e1f13",
+              "tertiary-fixed-dim": "#b7ccb9",
+              tertiary: "#091a0f",
+              "primary-container": "#1b3022",
+              "surface-tint": "#4d6453",
+              "surface-container-high": "#e9e8e5",
+              "on-error": "#ffffff",
+              "inverse-on-surface": "#f2f1ee",
+              "on-primary-container": "#819986",
+              "secondary-fixed-dim": "#eebd8e",
+              outline: "#737973",
+              secondary: "#7c5730",
+              "on-primary-fixed": "#0b2013",
+              "secondary-container": "#fdcb9b",
+              "on-surface": "#1a1c1a",
+              "on-secondary-container": "#79542d",
+              "surface-container": "#efeeeb",
+              "on-secondary-fixed-variant": "#61401b",
+              "surface-variant": "#e3e2e0",
+              "outline-variant": "#c3c8c1",
+              "surface-bright": "#faf9f6",
+              "on-tertiary-fixed-variant": "#394b3d",
+              "on-primary": "#ffffff",
+              error: "#ba1a1a",
+              "on-surface-variant": "#434843",
+              primary: "#061b0e",
+              "surface-container-highest": "#e3e2e0",
+              "error-container": "#ffdad6",
+              "inverse-primary": "#b4cdb8",
+              "tertiary-container": "#1d2f22",
+              "on-primary-fixed-variant": "#364c3c",
+              "on-secondary": "#ffffff",
+              "on-secondary-fixed": "#2c1600",
+              "tertiary-fixed": "#d3e8d5",
+              surface: "#faf9f6",
+              "primary-fixed-dim": "#b4cdb8",
+              "surface-container-low": "#f4f3f0",
+              "primary-fixed": "#d0e9d4"
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px"
+            },
+            spacing: {
+              xxl: "80px",
+              unit: "4px",
+              lg: "24px",
+              md: "16px",
+              xs: "4px",
+              gutter: "24px",
+              xl: "48px",
+              sm: "8px",
+              "container-max": "1280px"
+            },
+            fontFamily: {
+              "body-lg": ["Work Sans"],
+              "display-lg": ["Playfair Display"],
+              "display-lg-mobile": ["Playfair Display"],
+              "headline-md": ["Playfair Display"],
+              "headline-sm": ["Playfair Display"],
+              "body-md": ["Work Sans"],
+              "label-caps": ["Work Sans"]
+            },
+            fontSize: {
+              "body-lg": ["18px", { lineHeight: "1.6", fontWeight: "400" }],
+              "display-lg": ["48px", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "700" }],
+              "display-lg-mobile": ["36px", { lineHeight: "1.2", fontWeight: "700" }],
+              "headline-md": ["32px", { lineHeight: "1.3", fontWeight: "600" }],
+              "headline-sm": ["24px", { lineHeight: "1.4", fontWeight: "600" }],
+              "body-md": ["16px", { lineHeight: "1.6", fontWeight: "400" }],
+              "label-caps": ["12px", { lineHeight: "1.0", letterSpacing: "0.1em", fontWeight: "600" }]
+            }
+          }
+        }
+      };
+    </script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="bg-background text-on-background font-body-md relative overflow-x-hidden">
+    <div class="fixed inset-0 z-[-1] pointer-events-none opacity-40">
+      <div class="absolute inset-0 w-full h-full" style="display:block;">
+        <canvas id="shader-canvas-ANIMATION_4" style="display:block;width:100%;height:100%"></canvas>
+      </div>
+    </div>
+
+    <nav class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface/80 backdrop-blur-xl border-b border-outline/10 dark:border-outline-variant/10">
+      <div class="flex justify-between items-center w-full px-xxl py-md max-w-container-max mx-auto md:px-lg">
+        <div class="flex items-center gap-md">
+          <img alt="Guchhi Logo" class="h-12 w-12 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4PjHb-zNjepEUwnNC6zSqIbpqxNi9gc94Am0e1KPfS_-S3TNvv9pqBspZuc-56-A9IGI06QGI0y2jCw3gnYWjZ66eFGX015spJqHc1vbkHV6qwj_GJWpmCdb-1fd97vMDl_HBuT7y2HtjzZvdEXMgVp6G94UsZZ-AqWcJ3Mq2Y-vX9j8ClDxFgYuusK_-kbJp_VYK32SUxN0bDgQKyUZ1FXa0BPWSJ1n2aKDr5wo65jc95gSLjdNKB2HCeYqB8JU4kIFowZKfDIU" />
+          <span class="font-display-lg text-headline-sm tracking-tight text-primary dark:text-primary-fixed hidden md:block">Guchhi</span>
+        </div>
+        <div class="hidden md:flex gap-lg items-center">
+          <a class="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-colors" href="#about">About</a>
+          <div class="relative group">
+            <a class="font-body-md text-body-md text-primary font-bold border-b-2 border-secondary pb-1 flex items-center gap-xs" href="#products">
+              Products
+              <span class="material-symbols-outlined text-[16px]">expand_more</span>
+            </a>
+          </div>
+          <a class="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-colors" href="#sourcing">Sourcing</a>
+          <a class="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-colors" href="#contact">Contact</a>
+        </div>
+        <div class="flex items-center gap-md text-primary dark:text-primary-fixed">
+          <button class="hover:text-secondary-container dark:hover:text-secondary-fixed transition-all duration-300">
+            <span class="material-symbols-outlined" data-icon="person">person</span>
+          </button>
+          <button class="hover:text-secondary-container dark:hover:text-secondary-fixed transition-all duration-300 relative">
+            <span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+            <span class="absolute -top-1 -right-1 bg-secondary text-on-secondary text-[10px] w-4 h-4 rounded-full flex items-center justify-center">0</span>
+          </button>
+        </div>
+        <button class="md:hidden text-primary">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+      </div>
+    </nav>
+
+    <header class="relative h-screen w-full flex flex-col justify-center items-center overflow-hidden pt-xxl">
+      <div class="absolute inset-0 z-0">
+        <div class="absolute inset-0 w-full h-full" style="display:block;">
+          <script src="https://ajax.googleapis.com/ajax/libs/threejs/r125/three.min.js"></script>
+          <div id="threejs-container-ANIMATION_3" style="width:100%;height:100%"></div>
+        </div>
+      </div>
+      <div class="relative z-10 flex flex-col items-center text-center max-w-3xl px-lg reveal-sequence" id="hero-text-container">
+        <h1 class="font-display-lg md:text-[80px] text-display-lg-mobile text-primary mb-md tracking-tight opacity-0 transform translate-y-10 transition-all duration-1000 ease-out" id="hero-title">
+          Guchhi
+        </h1>
+        <p class="font-body-lg text-body-lg text-on-surface-variant mb-xl opacity-0 transform translate-y-10 transition-all duration-1000 delay-500 ease-out max-w-xl mx-auto" id="hero-desc">
+          Wild-Harvested Himalayan Morels, Red Rice &amp; Rajma
+        </p>
+        <a class="opacity-0 transform translate-y-10 transition-all duration-1000 delay-1000 ease-out bg-tertiary text-on-tertiary px-lg py-md rounded font-label-caps tracking-widest hover:bg-secondary transition-colors" href="#products">
+          EXPLORE COLLECTION
+        </a>
+      </div>
+      <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10 animate-bounce opacity-70">
+        <span class="material-symbols-outlined text-on-surface-variant">arrow_downward</span>
+      </div>
+    </header>
+
+    <section class="py-xxl px-lg max-w-container-max mx-auto" id="about">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-xxl items-center reveal-element">
+        <div class="space-y-lg">
+          <h2 class="font-label-caps text-label-caps text-outline uppercase tracking-widest">Why Guchhi</h2>
+          <h3 class="font-headline-md text-headline-md text-primary">Mountain Elegance in Every Forage</h3>
+          <p class="font-body-lg text-body-lg text-on-surface-variant">
+            We synthesize the raw, untamed spirit of the Himalayas with the meticulous refinement of high-end gastronomy. Every product is a physical expression of the Ravi and Beas basins, brought to you with total transparency.
+          </p>
+          <ul class="space-y-md pt-md">
+            <li class="flex items-start gap-md">
+              <span class="material-symbols-outlined text-secondary">eco</span>
+              <div>
+                <strong class="font-body-md text-primary block">Direct Sourcing</strong>
+                <span class="font-body-md text-on-surface-variant text-sm">Foraged by generationally skilled families.</span>
+              </div>
+            </li>
+            <li class="flex items-start gap-md">
+              <span class="material-symbols-outlined text-secondary">verified</span>
+              <div>
+                <strong class="font-body-md text-primary block">Authenticity &amp; Premium Quality</strong>
+                <span class="font-body-md text-on-surface-variant text-sm">Hand-graded whole caps, sun-dried naturally.</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="relative h-[600px] w-full tactile-border rounded-sm overflow-hidden p-xs bg-surface-dim">
+          <div class="w-full h-full bg-cover bg-center rounded-sm" data-alt="A minimalist, high-end editorial photograph of a rustic woven basket resting on a clean, light-colored stone surface. Inside the basket, a few exquisite wild morel mushrooms are delicately arranged next to a small linen cloth. The lighting is soft and natural, evoking a serene, high-contrast minimalist luxury aesthetic with deep forest tones and crisp whites. Focus is sharp on the textures." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCMgbA1CjDAM85vObEoBMdhq5ayPEcrXdwebs9dj65YrJ28EoTeBTKVY7KKf-mwKVbjfrKpIzLBJ3RvX1cz-CRs8vFGOtc2lsg6wY_sYWAfCheorjrUtxBzBfieSHvpD_U4Voab-XSQTYGzKOS8KK-fQqOdkXzxZqgZZRtaqja88JUVOl9PF5fibI2UBugFIb1fUpgJGU3OmhOBf4kJvkR9FL3MKT0FyEvnQXdrB2YAs-Zz6wizumveqvitQzpFjFhbwuWqyT0_VCQ')"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-xxl bg-surface-container-low border-y border-outline/10" id="products">
+      <div class="max-w-container-max mx-auto px-lg">
+        <div class="text-center mb-xl reveal-element">
+          <h2 class="font-label-caps text-label-caps text-outline uppercase tracking-widest mb-xs">Our Collection</h2>
+          <h3 class="font-headline-md text-headline-md text-primary">The Harvest</h3>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+          <div class="group cursor-pointer reveal-element">
+            <div class="relative h-96 mb-md tactile-border overflow-hidden rounded-sm bg-surface">
+              <div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" data-alt="A striking macro photograph of premium Himalayan Morel mushrooms (Morchella esculenta) resting on a piece of slate. The intricate honeycomb texture of the mushroom caps is highlighted by dramatic, soft directional lighting. The color palette features deep earthy browns against a clean, light misty background, perfectly capturing a modern luxury aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAsAP4_h6AwHi4LZptczEXeJB04FOuLGHxhN6n5zaOw3eAcXxclOsz0g0K5SxPMvc9EgZePorqT2FHPGYLSkWEi3pVs6hSoN8NotL1i5Un2wyhcXKYvQdg67bThembsDK8-UVkMRUhzVXDkOLoRJbJ-MofTVyxmYCO70TKL2X95sehhOT33nXAjS69a7lbvKTExCECfEM25yKIPaTBsdCjUze4qVlj8EARxydciUwAx9lXO1Yd4hpjbKUvVqenoRlwjCKCW9UrX4fc')"></div>
+              <div class="absolute top-md left-md bg-surface/90 px-sm py-xs rounded-full font-label-caps text-primary text-[10px] tactile-border backdrop-blur-md">
+                SPRING FORAGE
+              </div>
+            </div>
+            <h4 class="font-headline-sm text-headline-sm text-primary mb-xs">Himalayan Morels</h4>
+            <p class="font-body-md text-on-surface-variant italic mb-sm">Morchella esculenta</p>
+            <button class="font-label-caps text-secondary uppercase tracking-widest border-b border-transparent group-hover:border-secondary transition-colors pb-1">
+              View Details
+            </button>
+          </div>
+          <div class="group cursor-pointer reveal-element" style="transition-delay: 100ms;">
+            <div class="relative h-96 mb-md tactile-border overflow-hidden rounded-sm bg-surface">
+              <div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" data-alt="An elegant flat-lay photograph of Himalayan Red Rice scattered artistically on a pristine white ceramic plate. The deep, rich russet and burgundy tones of the rice grains contrast sharply with the bright white background. Soft, diffused lighting emphasizes the organic texture, maintaining a high-contrast minimalist style suitable for a luxury food brand." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBVmGK-NzH7ia8r-IicVTGFhAEVTB94A8fMn9qlDeXuV3b_h3e6ecW59u0IAGo0HjzT4U9dyDfPW3pS_8SQyVo9-q3xFOXLi8wKlmPXBiAaR-QWCHl4-ntD0VSFyC_FldrPqJ5VHsen4Mu5Xodaoio-ipXOOZNDd6Ckv-LmvWimxCJLmtdYR6H0M3XF8edmVBT4sJLlDftiT8UvSEWW1NRbhoUx00CnSFI29F1wqOfzk9sSLTU-l1Ix729NInN-J5pYYlughV7L50Y')"></div>
+              <div class="absolute top-md left-md bg-surface/90 px-sm py-xs rounded-full font-label-caps text-primary text-[10px] tactile-border backdrop-blur-md">
+                SNOWMELT FED
+              </div>
+            </div>
+            <h4 class="font-headline-sm text-headline-sm text-primary mb-xs">Himalayan Red Rice</h4>
+            <p class="font-body-md text-on-surface-variant italic mb-sm">Oryza sativa · red pericarp</p>
+            <button class="font-label-caps text-secondary uppercase tracking-widest border-b border-transparent group-hover:border-secondary transition-colors pb-1">
+              View Details
+            </button>
+          </div>
+          <div class="group cursor-pointer reveal-element" style="transition-delay: 200ms;">
+            <div class="relative h-96 mb-md tactile-border overflow-hidden rounded-sm bg-surface">
+              <div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" data-alt="A sophisticated close-up shot of small, premium Bharmour Rajma (kidney beans) piled gently in a handcrafted wooden bowl. The beans possess a rich, dark maroon color with a subtle sheen. Set against a minimalist, light grey textured background, the image evokes a tactile, artisanal quality aligned with high-end sustainable sourcing." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA5dyJib2O8-IqfsdGS2PN0M1FN6puxLogdwrV5QM1OWFIGc6ciix55_DKwF4nJ5fuT_jRew5FOb9U4KcV5zPcou4guHGhRLcPvl3C2yF1cMiBr5TLG22gibpKoOhaEj_yx9hn4AaMfpeJleLPpwgYpRB6qx2NLAMYPY2s6a_UdJKPiRxZbH8jhHVkZIKheS7XtziSbxt_0MxTDTOLrPgy-n_mi-FgvVdx_5UyieUfyDqLIY7g4RTS4VOh2yCGZf7DAVn6Xrh5_e34')"></div>
+            </div>
+            <h4 class="font-headline-sm text-headline-sm text-primary mb-xs">Premium Rajma</h4>
+            <p class="font-body-md text-on-surface-variant italic mb-sm">Phaseolus vulgaris · Bharmour</p>
+            <button class="font-label-caps text-secondary uppercase tracking-widest border-b border-transparent group-hover:border-secondary transition-colors pb-1">
+              View Details
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-xxl px-lg max-w-container-max mx-auto relative" id="sourcing">
+      <div class="text-center mb-xxl reveal-element">
+        <h2 class="font-label-caps text-label-caps text-outline uppercase tracking-widest mb-xs">Provenance</h2>
+        <h3 class="font-headline-md text-headline-md text-primary">Where It Comes From</h3>
+      </div>
+      <div class="space-y-xxl">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-lg items-center reveal-element">
+          <div class="md:col-span-5 md:col-start-1">
+            <div class="relative h-[400px] tactile-border rounded-sm overflow-hidden">
+              <div class="w-full h-full bg-cover bg-center" data-alt="A breathtaking, minimalist landscape photograph of the Bharmour mountain valley in the Himalayas. The image features rugged mountain peaks softened by mist, with subtle terraced slopes in the foreground. The color palette is muted, focusing on cool greys, deep forest greens, and expansive white sky, embodying a serene 'Mountain Elegance' aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDz4X2aSed_ZUTp5oPCfD0PgEtpL_6AB66x0dVHpzzCyULVT1QMhg4RZW03XOLK2hcxYOLhuSzxKt4uFZgg19U8ntrvXHtTYcTbDRMsMe38h7P12ToX0dwJvsZJ36rOyAkbwPHVVIuTpUTM5v1Bn4Ib_AEDmRlYYKNXrtb1cTHt3Qa8aEQKI1ycSzn6qEsuths4s5rXMJlwnWvgfBrX4cGcDWVbEUOFzH1Aw87fpXwNCAPI2zttSK77VZKvRlKb2tihZZ7U63nAoJ0')"></div>
+            </div>
+          </div>
+          <div class="md:col-span-6 md:col-start-7 space-y-md">
+            <div class="inline-block px-sm py-xs border border-outline/30 rounded font-label-caps text-primary text-[10px] bg-surface-dim/30">
+              2,000 – 2,900 m Elevation
+            </div>
+            <h4 class="font-headline-sm text-headline-sm text-primary">Chamba &amp; Bharmour</h4>
+            <p class="font-body-md text-on-surface-variant">
+              Home to our Premium Rajma. These small, thin-skinned mountain beans are cultivated in the crisp air of the Bharmour region, resulting in a rich, buttery texture impossible to replicate at lower altitudes.
+            </p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-lg items-center reveal-element">
+          <div class="md:col-span-6 md:col-start-1 md:order-1 order-2 space-y-md">
+            <div class="inline-block px-sm py-xs border border-outline/30 rounded font-label-caps text-primary text-[10px] bg-surface-dim/30">
+              1,800 – 3,200 m Elevation
+            </div>
+            <h4 class="font-headline-sm text-headline-sm text-primary">Kullu Valley</h4>
+            <p class="font-body-md text-on-surface-variant">
+              The cradle of the Guchhi. Fruiting briefly in March just after the snowmelt, these rare morels are wild-foraged by the same families who have walked these ancient forest paths for generations.
+            </p>
+          </div>
+          <div class="md:col-span-5 md:col-start-8 md:order-2 order-1">
+            <div class="relative h-[400px] tactile-border rounded-sm overflow-hidden">
+              <div class="w-full h-full bg-cover bg-center" data-alt="A serene, high-contrast photograph of a foggy pine forest in the Kullu Valley during early spring melt. The ground is partially covered in receding snow, revealing dark, rich soil beneath. The composition is highly structured and minimalist, conveying the rugged yet delicate environment where rare wild mushrooms grow." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBnn8wo_GqjtWoJRVczUrnn0mX8IxxmG_cEpXJJh4L7PvWm1HpF5IV7lkJNzJ-ylB-_52zWkFCZdbS7MUNEMklOpK0oy3NzBLENpyfyVDyzXYgUvVlrhIfOsG7o7ANfyA9YY6FoG48QbIM9NX0HON7KvwEPMwxmJFKKBuWuDr8A91j_8q6eEHIjJuZ_tVEVudaGgcxFDmou7Y14MUMZdawF0Npom-T2jB9Qd1b2QavMGWj6itC7r-KTDfdeKEgo_xfsrlQXChujWoM')"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-lg items-center reveal-element">
+          <div class="md:col-span-5 md:col-start-1">
+            <div class="relative h-[400px] tactile-border rounded-sm overflow-hidden">
+              <div class="w-full h-full bg-cover bg-center" data-alt="A minimalist architectural photograph showing the geometric patterns of traditional terraced fields in the Shimla Hills. The fields are carved into the mountainside, catching the soft, early morning light. The color palette emphasizes natural earth tones against crisp white light, creating a sense of quiet luxury and agricultural heritage." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBgFYMf2skOu1AmAzSVD6Ttea0WZG6xe8wAA0osOuKvoy2BNlmRVjLra1gX8FObej34UbfZ9ThwjO_uWOsyGofFYwqpmqMup9cvO3N2_V9Ba39tQycj91IO4e9S3vJUwbA1RRMCstoztHTQy3wnTswAUTWIxqd_2Zdcq7O--wjSvP44f5equxrZapifnTmSDLUpoAZeSnYVo4nv2gauLcWIMwN2PlhlrxKzbqTV-JI4FQbJF_yQEx2IKHlMnN0DGXCBZD18kdEVfus')"></div>
+            </div>
+          </div>
+          <div class="md:col-span-6 md:col-start-7 space-y-md">
+            <div class="inline-block px-sm py-xs border border-outline/30 rounded font-label-caps text-primary text-[10px] bg-surface-dim/30">
+              1,400 – 2,400 m Elevation
+            </div>
+            <h4 class="font-headline-sm text-headline-sm text-primary">Shimla Hills</h4>
+            <p class="font-body-md text-on-surface-variant">
+              Nourished purely by rain and snowmelt, our Himalayan Red Rice is grown in the ancient terraced fields of the Shimla Hills, preserving an agricultural legacy that respects the mountain's natural rhythm.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-xl bg-primary-container text-on-primary-container mt-xl">
+      <div class="max-w-container-max mx-auto px-lg text-center reveal-element">
+        <h3 class="font-headline-sm text-on-tertiary mb-md">Uncompromising Standards</h3>
+        <p class="font-label-caps tracking-widest text-inverse-primary mb-lg">FSSAI Lic. 23326001002346</p>
+        <div class="flex flex-wrap justify-center gap-lg md:gap-xxl mt-xl border-t border-outline/20 pt-lg">
+          <div class="flex flex-col items-center gap-sm">
+            <span class="material-symbols-outlined text-inverse-primary">qr_code_scanner</span>
+            <span class="font-label-caps text-xs">Batch-Coded &amp; Date-Stamped</span>
+          </div>
+          <div class="flex flex-col items-center gap-sm">
+            <span class="material-symbols-outlined text-inverse-primary">front_hand</span>
+            <span class="font-label-caps text-xs">Hand-Graded Whole Caps</span>
+          </div>
+          <div class="flex flex-col items-center gap-sm">
+            <span class="material-symbols-outlined text-inverse-primary">wb_sunny</span>
+            <span class="font-label-caps text-xs">Naturally Sun-Dried</span>
+          </div>
+          <div class="flex flex-col items-center gap-sm">
+            <span class="material-symbols-outlined text-inverse-primary">recycling</span>
+            <span class="font-label-caps text-xs">100% Recyclable Pack</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="bg-primary dark:bg-surface-container-lowest text-on-primary dark:text-on-surface w-full py-xl px-xxl border-t border-outline/20 mt-auto" id="contact">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-gutter max-w-container-max mx-auto mb-xl">
+        <div class="col-span-1 md:col-span-2 space-y-md pr-lg">
+          <h2 class="font-display-lg text-headline-md text-secondary-fixed mb-sm">Guchhi</h2>
+          <p class="font-body-md text-on-primary/80 max-w-md">
+            Direct from the high altitudes of the Himalayas to your kitchen. Subscribe for seasonal harvest updates and limited batch releases.
+          </p>
+          <form class="flex mt-md max-w-sm">
+            <input class="bg-transparent border-b border-on-primary/30 py-sm px-xs w-full focus:outline-none focus:border-secondary-fixed text-on-primary font-body-md placeholder:text-on-primary/50 transition-colors" placeholder="Your email address" type="email" />
+            <button class="ml-sm font-label-caps tracking-widest text-secondary-fixed hover:text-white transition-colors" type="button">JOIN</button>
+          </form>
+        </div>
+        <div class="space-y-sm">
+          <h4 class="font-label-caps tracking-widest text-on-primary/50 mb-md">Links</h4>
+          <a class="block font-body-md text-on-primary/70 dark:text-on-surface/70 hover:text-secondary-fixed transition-colors" href="#">Sustainability</a>
+          <a class="block font-body-md text-on-primary/70 dark:text-on-surface/70 hover:text-secondary-fixed transition-colors" href="#">FSSAI Compliance</a>
+          <a class="block font-body-md text-on-primary/70 dark:text-on-surface/70 hover:text-secondary-fixed transition-colors" href="#">Batch Verification</a>
+          <a class="block font-body-md text-on-primary/70 dark:text-on-surface/70 hover:text-secondary-fixed transition-colors" href="#">Shipping Policy</a>
+          <a class="block font-body-md text-on-primary/70 dark:text-on-surface/70 hover:text-secondary-fixed transition-colors" href="#">Privacy</a>
+        </div>
+        <div class="space-y-sm">
+          <h4 class="font-label-caps tracking-widest text-on-primary/50 mb-md">Contact</h4>
+          <p class="font-body-md text-on-primary/70">Proprietor: Anshu Sood</p>
+          <p class="font-body-md text-on-primary/70">hello@guchhi.com</p>
+          <div class="flex gap-sm mt-md">
+            <div class="w-8 h-8 rounded-full border border-on-primary/30 flex items-center justify-center hover:border-secondary-fixed cursor-pointer transition-colors">In</div>
+            <div class="w-8 h-8 rounded-full border border-on-primary/30 flex items-center justify-center hover:border-secondary-fixed cursor-pointer transition-colors">Ig</div>
+          </div>
+        </div>
+      </div>
+      <div class="pt-lg border-t border-on-primary/10 max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-sm">
+        <p class="font-body-md text-sm text-on-primary/50">© 2024 Guchhi Wild-Foraged Foods. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
