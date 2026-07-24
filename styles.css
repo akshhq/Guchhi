@@ -25,3 +25,54 @@
 html {
   scroll-behavior: smooth;
 }
+
+.hero-scroll {
+  height: 300vh;
+}
+
+.hero-copy {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 280ms ease-out, transform 280ms ease-out;
+}
+
+@media (max-width: 767px) {
+  .hero-scroll {
+    height: 260vh;
+  }
+}
+
+@media (min-width: 768px) {
+  #hero-text-container {
+    position: absolute;
+    top: 34%;
+    left: clamp(3rem, 9vw, 10rem);
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  #hero-desc {
+    max-width: 26rem;
+  }
+}
+section {
+  position: relative;
+  overflow: clip;
+}
+
+section::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  left: -6%;
+  right: -6%;
+  top: -3.25rem;
+  height: 5.5rem;
+  background: linear-gradient(176deg, transparent 40%, rgba(218, 228, 214, 0.56) 42%, transparent 76%);
+  pointer-events: none;
+}
+
+section > * {
+  position: relative;
+  z-index: 1;
+}
