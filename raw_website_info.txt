@@ -1,0 +1,31 @@
+Website Info
+
+Guchhi · Wild-Foraged Food Products
+Guchhi — Wild-Harvested Himalayan Morels, Red Rice & Rajma
+
+The website should suit all type of screens, majority crowd is mobile and laptop based.
+
+Hero section starting from a blank screen and a animated box falling from the top.
+As we scroll an animation starts to play where the box rotates and flips, then it opens up and a the product falls, which is a mushroom.
+The box then stops as we scroll and the mushroom fades away as the hero section ends.
+Hero sections has the company name reveal, then as the mushroom falls. the description appears and stays till the end of the hero section.
+The background is nature based for the whole website, like mountains but in a subtle way. Because the origin is Himachal Pradesh.
+
+The nav bar should have the logo and company name on the left most, then the basic navigation to necessary sections. Only the product option will have a drop down for each of it's products, and view all option.
+
+Then an about section telling about the company and why guchhi, you may use points like Direct Sourcing, Authenticity, Premium Quality, sustainable practices, or anything similar.
+
+Then the product section, current we have 3 products 1)Himalayan Morels aka Guchhi Mushroom - Morchella esculenta 2) Himalayan Red Rice - Oryza sativa · red pericarp 3) Premium Rajma - Phaseolus vulgaris · Bharmour. We may extend our product range. Each product has a dedicated page to give indepth details for each one of them. url should be like mainurl.com/products/guchhi-mushrooms
+
+Then "Where it comes from" section, we got Three valleys i.e. three harvests
+1) Chamba & Bharmour - 2,000 – 2,900 m · Ravi Basin
+Bharmour rajma is a mountain bean — small, thin-skinned, and grown on plots too steep for a tractor. It takes a long season and a cold night to build the skin that lets it hold shape through a slow braise.
+2) Kullu Valley - 1,800 – 3,200 m · Beas Basin
+Deodar and blue-pine forest on the Beas gives the valley its damp, mineral floor. After the snow retreats in March, guchhi fruits along the leaf litter for a window of barely six weeks. Nobody farms it — the same families walk the same slopes their grandparents did.
+3) Shimla Hills 1,400 – 2,400 m · Mid-Himalaya
+Terraced fields cut into the oak belt above Shimla. The red rice here is grown on rain and snowmelt alone, in soil that has never been levelled flat. Cool nights slow the grain and set the anthocyanin that gives it its colour.
+
+Then the "Trust & Credibility section", it got the reviews and other things. It should also include lines like FSSAI Lic. 23326001002346, Batch-coded & date-stamped. Hand-graded, whole caps
+Sun-dried, never kilned, Recyclable pack.
+
+Then the Contact Us section. Then footer, it should have the info Proprietor: Anshu Sood.

@@ -1,0 +1,26 @@
+# Development override: run only Postgres + Redis in Docker, and run the
+# API locally with `npm run dev` for hot reload.
+#   docker compose -f docker-compose.dev.yml up -d
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: guchhi-postgres-dev
+    environment:
+      POSTGRES_USER: guchhi
+      POSTGRES_PASSWORD: guchhi
+      POSTGRES_DB: guchhi
+    ports:
+      - "5432:5432"
+    volumes:
+      - guchhi_postgres_dev_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: guchhi-redis-dev
+    ports:
+      - "6379:6379"
+
+volumes:
+  guchhi_postgres_dev_data:

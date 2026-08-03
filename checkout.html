@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout | Guchhi</title>
+    <meta name="robots" content="noindex" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=Work+Sans:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet" />
+    <link rel="icon" href="media/logo.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-dim": "#dbdad7",
+              "secondary-fixed": "#ffdcbd",
+              "surface-container-lowest": "#ffffff",
+              background: "#faf9f6",
+              "on-background": "#1a1c1a",
+              surface: "#faf9f6",
+              "inverse-surface": "#2f312f",
+              "primary-container": "#1b3022",
+              "surface-tint": "#4d6453",
+              "on-primary-container": "#819986",
+              secondary: "#7c5730",
+              "secondary-container": "#fdcb9b",
+              "on-surface": "#1a1c1a",
+              "surface-container": "#efeeeb",
+              "surface-variant": "#e3e2e0",
+              "outline-variant": "#c3c8c1",
+              tertiary: "#091a0f",
+              "on-tertiary": "#ffffff",
+              primary: "#061b0e",
+              "on-primary": "#ffffff",
+              "on-surface-variant": "#434843",
+              "surface-container-low": "#f4f3f0",
+              "surface-container-high": "#e9e8e5",
+              "inverse-primary": "#b4cdb8",
+              "surface-container-highest": "#e3e2e0"
+            },
+            borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+            spacing: {
+              xxl: "80px", unit: "4px", lg: "24px", md: "16px", xs: "4px",
+              gutter: "24px", xl: "48px", sm: "8px", "container-max": "1280px"
+            },
+            fontFamily: {
+              "body-lg": ["Work Sans"], "display-lg": ["Playfair Display"],
+              "headline-md": ["Playfair Display"], "headline-sm": ["Playfair Display"],
+              "body-md": ["Work Sans"], "label-caps": ["Work Sans"]
+            },
+            fontSize: {
+              "body-lg": ["18px", { lineHeight: "1.6", fontWeight: "400" }],
+              "display-lg": ["48px", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "700" }],
+              "headline-md": ["32px", { lineHeight: "1.3", fontWeight: "600" }],
+              "headline-sm": ["24px", { lineHeight: "1.4", fontWeight: "600" }],
+              "body-md": ["16px", { lineHeight: "1.6", fontWeight: "400" }],
+              "label-caps": ["12px", { lineHeight: "1.0", letterSpacing: "0.1em", fontWeight: "600" }]
+            }
+          }
+        }
+      };
+    </script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="bg-background text-on-background font-body-md relative overflow-x-hidden">
+    <nav id="site-nav" class="fixed top-0 w-full z-50 bg-background/90 backdrop-blur-md border-b border-outline-variant/20">
+      <div class="flex justify-between items-center w-full px-xxl py-md max-w-container-max mx-auto md:px-lg">
+        <a class="flex items-center gap-sm md:gap-md" href="index.html">
+          <img alt="Guchhi Logo" class="h-10 w-10 md:h-12 md:w-12 object-contain rounded-full" src="media/logo.jpg" />
+          <span class="font-display-lg text-lg md:text-headline-sm tracking-tight text-primary block">Guchhi</span>
+        </a>
+        <a href="index.html#products" class="font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors flex items-center gap-xs">
+          <span class="material-symbols-outlined text-[18px]" aria-hidden="true">arrow_back</span>
+          Continue shopping
+        </a>
+      </div>
+    </nav>
+
+    <main class="pt-32 pb-xxl px-lg max-w-container-max mx-auto min-h-screen">
+      <header class="mb-xl text-center">
+        <p class="font-label-caps text-label-caps text-secondary uppercase tracking-widest mb-xs">Secure Checkout</p>
+        <h1 class="font-display-lg text-headline-md md:text-display-lg text-primary">Complete your order</h1>
+      </header>
+
+      <!-- Stepper -->
+      <ol id="checkout-stepper" class="checkout-stepper" aria-label="Checkout progress">
+        <li class="checkout-step" data-step="cart"><span class="checkout-step-dot">1</span><span class="checkout-step-label">Cart</span></li>
+        <li class="checkout-step" data-step="shipping"><span class="checkout-step-dot">2</span><span class="checkout-step-label">Shipping</span></li>
+        <li class="checkout-step" data-step="address"><span class="checkout-step-dot">3</span><span class="checkout-step-label">Address</span></li>
+        <li class="checkout-step" data-step="review"><span class="checkout-step-dot">4</span><span class="checkout-step-label">Review</span></li>
+        <li class="checkout-step" data-step="payment"><span class="checkout-step-dot">5</span><span class="checkout-step-label">Payment</span></li>
+      </ol>
+
+      <div class="checkout-layout">
+        <div class="checkout-main">
+          <!-- Empty cart state -->
+          <section id="checkout-empty-state" class="checkout-panel hidden text-center py-xl">
+            <span class="material-symbols-outlined text-5xl text-outline" aria-hidden="true">shopping_bag</span>
+            <p class="font-headline-sm text-headline-sm text-primary mt-md mb-xs">Your cart is empty</p>
+            <p class="text-on-surface-variant mb-md">Add something wild-foraged before checking out.</p>
+            <a href="index.html#products" class="inline-block bg-tertiary text-on-tertiary py-sm px-lg rounded-lg font-label-caps uppercase tracking-widest hover:bg-secondary transition-colors">Browse products</a>
+          </section>
+
+          <!-- Step 1: Cart -->
+          <section id="step-cart" class="checkout-panel" data-panel="cart">
+            <h2 class="font-headline-sm text-headline-sm text-primary mb-md">Review your cart</h2>
+            <div id="checkout-cart-lines" class="checkout-cart-lines"></div>
+            <p id="checkout-sync-warning" class="checkout-warning hidden"></p>
+            <div class="checkout-panel-actions">
+              <span></span>
+              <button type="button" class="checkout-btn-primary" data-next>Continue to shipping</button>
+            </div>
+          </section>
+
+          <!-- Step 2: Shipping -->
+          <section id="step-shipping" class="checkout-panel hidden" data-panel="shipping">
+            <h2 class="font-headline-sm text-headline-sm text-primary mb-md">Shipping</h2>
+            <div class="checkout-shipping-card">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="font-body-md text-primary font-medium">Standard delivery</p>
+                  <p class="text-sm text-on-surface-variant">Dispatched within 2 business days · delivered in 4–7 days</p>
+                </div>
+                <p id="checkout-shipping-cost" class="font-label-caps text-secondary">—</p>
+              </div>
+              <p class="text-xs text-on-surface-variant mt-sm">Free above <span id="checkout-free-shipping-threshold">₹1,500</span>.</p>
+            </div>
+            <label class="block mt-md">
+              <span class="font-label-caps text-xs uppercase tracking-widest text-on-surface-variant">Delivery notes (optional)</span>
+              <textarea id="checkout-notes" rows="2" class="checkout-input mt-xs" placeholder="e.g. leave with the security desk"></textarea>
+            </label>
+            <div class="checkout-panel-actions">
+              <button type="button" class="checkout-btn-secondary" data-back>Back</button>
+              <button type="button" class="checkout-btn-primary" data-next>Continue to address</button>
+            </div>
+          </section>
+
+          <!-- Step 3: Address -->
+          <section id="step-address" class="checkout-panel hidden" data-panel="address">
+            <h2 class="font-headline-sm text-headline-sm text-primary mb-md">Shipping address</h2>
+            <form id="checkout-address-form" class="checkout-form" novalidate>
+              <div id="checkout-guest-fields" class="checkout-form-grid">
+                <label class="checkout-field">
+                  <span>Email</span>
+                  <input type="email" name="guestEmail" required autocomplete="email" />
+                </label>
+                <label class="checkout-field">
+                  <span>Phone</span>
+                  <input type="tel" name="guestPhone" required autocomplete="tel" />
+                </label>
+              </div>
+              <div class="checkout-form-grid">
+                <label class="checkout-field checkout-field--full">
+                  <span>Full name</span>
+                  <input type="text" name="fullName" required autocomplete="name" />
+                </label>
+                <label class="checkout-field checkout-field--full">
+                  <span>Address line 1</span>
+                  <input type="text" name="line1" required autocomplete="address-line1" />
+                </label>
+                <label class="checkout-field checkout-field--full">
+                  <span>Address line 2 (optional)</span>
+                  <input type="text" name="line2" autocomplete="address-line2" />
+                </label>
+                <label class="checkout-field">
+                  <span>City</span>
+                  <input type="text" name="city" required autocomplete="address-level2" />
+                </label>
+                <label class="checkout-field">
+                  <span>State</span>
+                  <input type="text" name="state" required autocomplete="address-level1" />
+                </label>
+                <label class="checkout-field">
+                  <span>Postal code</span>
+                  <input type="text" name="postalCode" required autocomplete="postal-code" />
+                </label>
+                <label class="checkout-field">
+                  <span>Phone</span>
+                  <input type="tel" name="phone" required autocomplete="tel" />
+                </label>
+              </div>
+              <p id="checkout-address-error" class="checkout-warning hidden"></p>
+            </form>
+            <div class="checkout-panel-actions">
+              <button type="button" class="checkout-btn-secondary" data-back>Back</button>
+              <button type="button" class="checkout-btn-primary" data-next>Continue to review</button>
+            </div>
+          </section>
+
+          <!-- Step 4: Review -->
+          <section id="step-review" class="checkout-panel hidden" data-panel="review">
+            <h2 class="font-headline-sm text-headline-sm text-primary mb-md">Review your order</h2>
+            <div class="checkout-review-block">
+              <div class="flex items-center justify-between mb-xs">
+                <p class="font-label-caps text-xs uppercase tracking-widest text-on-surface-variant">Deliver to</p>
+                <button type="button" class="checkout-link" data-goto="address">Edit</button>
+              </div>
+              <p id="checkout-review-address" class="text-sm text-on-surface-variant"></p>
+            </div>
+            <div class="flex gap-sm mt-md mb-md">
+              <input id="checkout-coupon-input" type="text" placeholder="Coupon code" class="checkout-input flex-1" />
+              <button id="checkout-coupon-apply" type="button" class="checkout-btn-secondary">Apply</button>
+            </div>
+            <p id="checkout-coupon-message" class="text-xs text-on-surface-variant mb-md"></p>
+            <div id="checkout-review-totals" class="checkout-totals"></div>
+            <div class="checkout-panel-actions">
+              <button type="button" class="checkout-btn-secondary" data-back>Back</button>
+              <button type="button" class="checkout-btn-primary" data-next>Continue to payment</button>
+            </div>
+          </section>
+
+          <!-- Step 5: Payment -->
+          <section id="step-payment" class="checkout-panel hidden" data-panel="payment">
+            <h2 class="font-headline-sm text-headline-sm text-primary mb-md">Payment</h2>
+            <div class="checkout-payment-options" role="radiogroup" aria-label="Payment method">
+              <label class="checkout-payment-option">
+                <input type="radio" name="paymentMethod" value="razorpay" checked />
+                <span class="material-symbols-outlined" aria-hidden="true">credit_card</span>
+                <span>
+                  <span class="block font-body-md text-primary">Pay online</span>
+                  <span class="block text-xs text-on-surface-variant">Cards, UPI, netbanking via Razorpay</span>
+                </span>
+              </label>
+              <label class="checkout-payment-option">
+                <input type="radio" name="paymentMethod" value="cod" />
+                <span class="material-symbols-outlined" aria-hidden="true">payments</span>
+                <span>
+                  <span class="block font-body-md text-primary">Cash on delivery</span>
+                  <span class="block text-xs text-on-surface-variant">Pay when your order arrives</span>
+                </span>
+              </label>
+            </div>
+            <p id="checkout-payment-error" class="checkout-warning hidden"></p>
+            <div class="checkout-panel-actions">
+              <button type="button" class="checkout-btn-secondary" data-back>Back</button>
+              <button type="button" id="checkout-place-order" class="checkout-btn-primary">Place order</button>
+            </div>
+          </section>
+
+          <!-- Success -->
+          <section id="step-success" class="checkout-panel hidden text-center py-xl" data-panel="success">
+            <span class="material-symbols-outlined text-5xl text-secondary" aria-hidden="true">task_alt</span>
+            <p class="font-headline-sm text-headline-sm text-primary mt-md mb-xs">Order confirmed</p>
+            <p class="text-on-surface-variant mb-xs">Order <strong id="checkout-success-number"></strong> is on its way to being packed.</p>
+            <p class="text-sm text-on-surface-variant mb-md">A confirmation email is on its way to you.</p>
+            <a href="index.html" class="inline-block bg-tertiary text-on-tertiary py-sm px-lg rounded-lg font-label-caps uppercase tracking-widest hover:bg-secondary transition-colors">Back to home</a>
+          </section>
+        </div>
+
+        <aside class="checkout-summary">
+          <h2 class="font-label-caps text-xs uppercase tracking-widest text-on-surface-variant mb-sm">Order summary</h2>
+          <div id="checkout-summary-lines" class="checkout-summary-lines"></div>
+          <div class="checkout-summary-row"><span>Subtotal</span><span id="checkout-summary-subtotal">₹0</span></div>
+          <div class="checkout-summary-row"><span>Discount</span><span id="checkout-summary-discount">—</span></div>
+          <div class="checkout-summary-row"><span>Shipping</span><span id="checkout-summary-shipping">—</span></div>
+          <div class="checkout-summary-row"><span>Tax</span><span id="checkout-summary-tax">—</span></div>
+          <div class="checkout-summary-row checkout-summary-row--total"><span>Total</span><span id="checkout-summary-total">₹0</span></div>
+        </aside>
+      </div>
+    </main>
+
+    <footer class="bg-primary text-on-primary w-full py-xl px-xxl border-t border-outline-variant/20">
+      <div class="max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-start gap-lg">
+        <div>
+          <p class="font-display-lg text-headline-md text-secondary-fixed mb-sm">Guchhi</p>
+          <p class="font-body-md text-on-primary/75 max-w-md">Wild-foraged Himalayan produce, packed without adding anything to it.</p>
+        </div>
+        <div class="space-y-sm text-on-primary/75">
+          <p>Wild-Foraged Food Products</p>
+          <p>D5/94, Sector 15, Rohini, Delhi – 110089, India</p>
+          <p>+91 98715 20888</p>
+          <p>hello@guchhi.in</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script type="module" src="js/checkout/checkoutFlow.js"></script>
+  </body>
+</html>

@@ -1,0 +1,58 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: .
+      target: production
+    container_name: guchhi-api
+    restart: unless-stopped
+    ports:
+      - "${PORT:-4000}:4000"
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://guchhi:guchhi@postgres:5432/guchhi
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: sh -c "npx prisma migrate deploy && node dist/server.js"
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: guchhi-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: guchhi
+      POSTGRES_PASSWORD: guchhi
+      POSTGRES_DB: guchhi
+    ports:
+      - "5432:5432"
+    volumes:
+      - guchhi_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U guchhi"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: guchhi-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - guchhi_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  guchhi_postgres_data:
+  guchhi_redis_data:
