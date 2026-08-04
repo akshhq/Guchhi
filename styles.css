@@ -556,12 +556,13 @@ html.loader-active body {
   align-items: center;
   justify-content: center;
   background: #faf9f6;
-  transition: opacity 650ms cubic-bezier(0.4, 0, 0.2, 1), visibility 650ms;
+  transition: opacity 650ms cubic-bezier(0.4, 0, 0.2, 1), transform 700ms cubic-bezier(0.7, 0, 0.3, 1), visibility 700ms;
   animation: page-loader-hard-failsafe 1ms linear 7s forwards;
 }
 
 .page-loader[data-state='exit'] {
   opacity: 0;
+  transform: translateY(-8%);
   visibility: hidden;
   pointer-events: none;
 }
@@ -576,19 +577,19 @@ html.loader-active body {
 
 .page-loader-glow {
   position: absolute;
-  width: 320px;
-  height: 320px;
+  width: 360px;
+  height: 360px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(124, 87, 48, 0.16), rgba(124, 87, 48, 0) 70%);
+  background: radial-gradient(circle, rgba(124, 87, 48, 0.18), rgba(124, 87, 48, 0) 70%);
   opacity: 0;
-  animation: page-loader-glow 1800ms ease-out 200ms forwards;
+  animation: page-loader-glow 2000ms ease-out 200ms forwards;
   pointer-events: none;
 }
 
 @keyframes page-loader-glow {
   0% { opacity: 0; transform: scale(0.8); }
   40% { opacity: 1; }
-  100% { opacity: 0; transform: scale(1.2); }
+  100% { opacity: 0; transform: scale(1.25); }
 }
 
 .page-loader-mark {
@@ -610,12 +611,12 @@ html.loader-active body {
 }
 
 @keyframes page-loader-mark-out {
-  to { opacity: 0; transform: scale(1.06); }
+  to { opacity: 0; transform: scale(1.05); }
 }
 
 .page-loader-icon {
-  width: 46px;
-  height: 46px;
+  width: 54px;
+  height: 54px;
   fill: none;
   stroke: #061b0e;
   stroke-width: 2;
@@ -639,7 +640,7 @@ html.loader-active body {
 .page-loader-word {
   display: flex;
   font-family: 'Playfair Display', serif;
-  font-size: 34px;
+  font-size: 38px;
   letter-spacing: 0.06em;
   color: #061b0e;
   margin: 0 0 6px;
@@ -650,7 +651,7 @@ html.loader-active body {
   opacity: 0;
   transform: translateY(60%);
   animation: page-loader-letter-in 550ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  animation-delay: calc(420ms + var(--i, 0) * 55ms);
+  animation-delay: calc(380ms + var(--i, 0) * 50ms);
 }
 
 @keyframes page-loader-letter-in {
@@ -663,9 +664,27 @@ html.loader-active body {
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: #7c5730;
-  margin: 0;
+  margin: 0 0 20px;
+  opacity: 0;
+  animation: page-loader-fade-in 600ms ease-out 850ms forwards;
+}
+
+.page-loader-progress-track {
+  width: 140px;
+  height: 2px;
+  background: rgba(115, 121, 115, 0.2);
+  border-radius: 999px;
+  overflow: hidden;
   opacity: 0;
   animation: page-loader-fade-in 600ms ease-out 950ms forwards;
+}
+
+.page-loader-progress-bar {
+  width: 0%;
+  height: 100%;
+  background: #7c5730;
+  border-radius: 999px;
+  transition: width 150ms ease-out;
 }
 
 @keyframes page-loader-fade-in {
@@ -678,6 +697,7 @@ html.loader-active body {
   .page-loader-icon,
   .page-loader-word span,
   .page-loader-tagline,
+  .page-loader-progress-track,
   .page-loader-glow {
     animation-duration: 1ms !important;
     animation-delay: 0ms !important;

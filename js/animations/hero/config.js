@@ -19,10 +19,9 @@ export const ASSET_PATHS = {
 
 /** Responsive mushroom count by viewport width (min-width breakpoints, px). */
 export const MUSHROOM_BREAKPOINTS = [
-  { minWidth: 1200, count: 4 }, // desktop
-  { minWidth: 992, count: 3 }, // laptop
-  { minWidth: 640, count: 2 }, // tablet
-  { minWidth: 0, count: 1 } // mobile
+  { minWidth: 1024, count: 3 }, // desktop: 3 mushrooms
+  { minWidth: 640, count: 2 },  // tablet: 2 mushrooms
+  { minWidth: 0, count: 1 }     // mobile: 1 mushroom
 ];
 
 export const BOX_GEOMETRY = {
@@ -39,36 +38,27 @@ export const CAMERA = {
   position: { x: 0, y: 0.2, z: 7.5 }
 };
 
-/** Where mushrooms converge to, then push toward, before fading. */
-export const CONVERGE_TARGET = { x: 0, y: 0.35, z: 2.1 };
-export const ZOOM_TARGET = { x: 0, y: 0.45, z: 4.6 };
-
-/** Horizontal spread (fraction of half box-width) across the top face, by tier count. */
-export const SPREAD_BY_COUNT = {
-  1: [0],
-  2: [-0.5, 0.5],
-  3: [-0.7, 0, 0.7],
-  4: [-0.85, -0.3, 0.3, 0.85]
-};
-
 /**
  * Scroll-progress (0-1) windows that drive each phase of the sequence.
- * `stagger` values are added per mushroom index so instances move slightly
- * out of sync with one another for a more organic, less mechanical feel.
  */
 export const SCROLL_PHASES = {
   boxFlip: { start: 0.0, end: 0.25 },
-  lidOpen: { start: 0.2, end: 0.44 },
-  boxExit: { start: 0.62, end: 0.84 },
-  mushroomGrowth: { start: 0.27, end: 0.45, staggerPerIndex: 0.035 },
-  converge: { start: 0.55, end: 0.8 },
-  zoom: { start: 0.75, end: 0.95 },
-  fade: { start: 0.86, end: 1.0 },
-  titleIntro: { start: 0.08, end: 0.18 },
-  descriptionIn: { start: 0.48, end: 0.6 },
-  ctaIn: { start: 0.58, end: 0.69 }
+  lidOpen: { start: 0.12, end: 0.35 },
+  boxExit: { start: 0.60, end: 0.82 },
+  
+  // Mushroom sequence: starts AFTER box finishes opening (0.36)
+  mushroomGrowth: { start: 0.36, end: 0.56, staggerPerIndex: 0.04 },
+  mushroomScatter: { start: 0.52, end: 0.76 },
+  mushroomScale: { start: 0.70, end: 0.88 },
+  mushroomFade: { start: 0.82, end: 0.96 },
+
+  // Text copy transitions
+  titleIntro: { start: 0.05, end: 0.15 },
+  descriptionIn: { start: 0.40, end: 0.55 },
+  ctaIn: { start: 0.50, end: 0.65 }
 };
 
 export const INTRO_DURATION_MS = 1100;
 export const MODEL_LOAD_TIMEOUT_MS = 4500;
-export const MUSHROOM_TARGET_SIZE = 1.6;
+export const MUSHROOM_TARGET_SIZE = 0.65;
+

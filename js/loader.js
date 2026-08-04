@@ -1,37 +1,66 @@
 /**
  * loader.js
- * Netflix-style brand intro that doubles as a real asset preloader: it stays
- * on screen until the page has actually finished loading (images, fonts,
- * scripts), not just for a fixed decorative delay.
+ * Netflix-style brand intro that doubles as a real asset preloader.
+ * Tracks asset progress (fonts, page load, window assets) and smoothly drives
+ * a progress bar before performing an elegant wipe-up exit.
  *
- * Deliberately a plain classic script (not an ES module) so it can never be
- * taken down by an unrelated module failing to resolve elsewhere on the
- * page — this needs to be the most robust piece of JS on the site, since
- * everything else is hidden behind it.
+ * Written as a plain classic IIFE (not an ES module) for maximum robustness.
  */
 (function () {
   var loaderEl = document.getElementById('page-loader');
+  var barEl = document.getElementById('page-loader-bar');
   if (!loaderEl) return;
 
-  var MIN_VISIBLE_MS = 1900; // let the brand moment breathe, even on a fast connection
-  var MAX_WAIT_MS = 5000; // never hold the page hostage for a slow/stalled resource
-  var EXIT_TRANSITION_MS = 700;
+  var MIN_VISIBLE_MS = 2200; // Allow brand moment to breathe
+  var MAX_WAIT_MS = 5500;   // Failsafe timeout
+  var EXIT_TRANSITION_MS = 750;
 
   var startedAt = Date.now();
   var dismissed = false;
+  var progress = 0;
+  var targetProgress = 15;
 
   document.documentElement.classList.add('loader-active');
+
+  // Smooth progress bar animation loop
+  function updateProgressBar() {
+    if (dismissed) return;
+    if (progress < targetProgress) {
+      progress += (targetProgress - progress) * 0.12;
+      if (barEl) {
+        barEl.style.width = Math.min(Math.round(progress), 100) + '%';
+      }
+    }
+    requestAnimationFrame(updateProgressBar);
+  }
+  requestAnimationFrame(updateProgressBar);
+
+  // Simulated progressive load increments
+  var progressInterval = setInterval(function () {
+    if (targetProgress < 90) {
+      targetProgress += Math.random() * 20;
+      if (targetProgress > 90) targetProgress = 90;
+    }
+  }, 250);
 
   function dismiss() {
     if (dismissed) return;
     dismissed = true;
-    loaderEl.setAttribute('data-state', 'exit');
-    document.documentElement.classList.remove('loader-active');
-    window.setTimeout(function () {
-      if (loaderEl && loaderEl.parentNode) {
-        loaderEl.parentNode.removeChild(loaderEl);
-      }
-    }, EXIT_TRANSITION_MS);
+    clearInterval(progressInterval);
+
+    targetProgress = 100;
+    if (barEl) barEl.style.width = '100%';
+
+    setTimeout(function () {
+      loaderEl.setAttribute('data-state', 'exit');
+      document.documentElement.classList.remove('loader-active');
+
+      setTimeout(function () {
+        if (loaderEl && loaderEl.parentNode) {
+          loaderEl.parentNode.removeChild(loaderEl);
+        }
+      }, EXIT_TRANSITION_MS);
+    }, 150);
   }
 
   function whenPageAssetsReady() {
@@ -57,7 +86,6 @@
 
   whenPageAssetsReady().then(scheduleDismiss, scheduleDismiss);
 
-  // Hard failsafe: guarantees the site is never blocked indefinitely, even
-  // if some resource never fires a load/error event.
+  // Hard failsafe
   window.setTimeout(dismiss, MAX_WAIT_MS);
 })();
