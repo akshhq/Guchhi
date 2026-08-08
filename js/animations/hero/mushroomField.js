@@ -75,6 +75,7 @@ function createMushroomProfile(index, total) {
     scaleBase: 0.85 + jitter * 0.1,
     growthStart,
     growthEnd,
+    scatterStartAmount: ease(rangeProgress(growthEnd, SCROLL_PHASES.mushroomScatter.start, SCROLL_PHASES.mushroomScatter.end)),
     floatPhase: index * 1.7 + jitter,
     frozenAnchor: null
   };
@@ -155,6 +156,7 @@ export function createMushroomField({ boxWidth, boxHeight, getBoxMatrixWorld }) 
   const localPos = new THREE.Vector3();
   const worldPoint = new THREE.Vector3();
   const finalPosition = new THREE.Vector3();
+  const launchControlPoint = new THREE.Vector3();
 
   /**
    * @param {number} scrollProgress 0-1 progress through hero scroll range.
@@ -174,6 +176,7 @@ export function createMushroomField({ boxWidth, boxHeight, getBoxMatrixWorld }) 
       // Emergence progress (0 -> 1) starts AFTER box finishes opening (scroll 0.36+)
       const rawGrowth = rangeProgress(scrollProgress, profile.growthStart, profile.growthEnd);
       const growthAmount = ease(rawGrowth);
+      const hasFullyEmerged = rawGrowth >= 1;
 
       if (fadeAmount >= 0.99) {
         instance.visible = false;
@@ -181,11 +184,18 @@ export function createMushroomField({ boxWidth, boxHeight, getBoxMatrixWorld }) 
         return;
       }
 
+      // Reset the cached launch point when reverse-scrolling into the box.
+      // This guarantees each new pass captures the box position anew.
+      if (!hasFullyEmerged) profile.frozenAnchor = null;
+
       instance.visible = growthAmount > 0;
       if (!instance.visible) return;
 
-      // Phase 1: Emergence directly out of the top face opening of the wooden box
-      if (growthAmount < 0.999 || !profile.frozenAnchor) {
+      // Phase 1: Emergence directly out of the top face opening of the wooden box.
+      // Once the mushroom clears the box, save that exact point. The box starts
+      // moving upward shortly afterwards, so continuing to transform against it
+      // would introduce an unwanted vertical jump in the mushroom trajectory.
+      if (!hasFullyEmerged || !profile.frozenAnchor) {
         const t = growthAmount;
         const smoothT = t * t * (3 - 2 * t);
 
@@ -199,21 +209,40 @@ export function createMushroomField({ boxWidth, boxHeight, getBoxMatrixWorld }) 
         // Transform local box top-face coordinate directly to 3D world space
         worldPoint.copy(localPos).applyMatrix4(boxMatrixWorld);
 
-        if (growthAmount >= 0.999) {
+        if (hasFullyEmerged) {
           profile.frozenAnchor = worldPoint.clone();
         }
       } else {
         worldPoint.copy(profile.frozenAnchor);
       }
 
-      // Continuous subtle float bobbing
+      // Phase 2: travel from the saved launch anchor to the existing scatter
+      // target along one shallow quadratic Bezier. It keeps the same start and
+      // end positions while providing a gentle outward sweep instead of a rise.
+      const travelAmount = clamp(
+        (scatterAmount - profile.scatterStartAmount) / (1 - profile.scatterStartAmount),
+        0,
+        1
+      );
+
+      if (hasFullyEmerged) {
+        const launchPoint = profile.frozenAnchor;
+        launchControlPoint.lerpVectors(launchPoint, profile.scatterTarget, 0.42);
+        launchControlPoint.y = THREE.MathUtils.lerp(launchPoint.y, profile.scatterTarget.y, 0.42) - 0.18;
+        finalPosition.copy(launchPoint)
+          .multiplyScalar((1 - travelAmount) * (1 - travelAmount))
+          .addScaledVector(launchControlPoint, 2 * (1 - travelAmount) * travelAmount)
+          .addScaledVector(profile.scatterTarget, travelAmount * travelAmount);
+      } else {
+        finalPosition.copy(worldPoint);
+      }
+
+      // Continuous subtle float bobbing is visual-only, so it cannot affect
+      // the saved launch point or alter the path endpoints.
       const floatBob = Math.sin(elapsedMs * 0.0014 + profile.floatPhase) * 0.05;
       const floatDrift = Math.cos(elapsedMs * 0.0009 + profile.floatPhase) * 0.025;
-      worldPoint.y += floatBob;
-      worldPoint.x += floatDrift;
-
-      // Phase 2: Smooth scatter transition horizontally across screen
-      finalPosition.lerpVectors(worldPoint, profile.scatterTarget, scatterAmount);
+      finalPosition.y += floatBob * (1 - travelAmount);
+      finalPosition.x += floatDrift * (1 - travelAmount);
 
       // Phase 3: Push & scale up toward camera
       finalPosition.z += scaleAmount * 1.5;

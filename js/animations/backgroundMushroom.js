@@ -108,13 +108,14 @@ export function initBackgroundMushroom() {
       // In GLTF, cap is +Y. Rotating X by -Math.PI / 2 points cap directly toward +Z facing user.
       model.rotation.set(-Math.PI / 2 + 0.15, 0, 0);
 
-      const warmCream = new THREE.Color(0xfff2e6);
       model.traverse((child) => {
         if (!child.isMesh) return;
         const mats = Array.isArray(child.material) ? child.material : [child.material];
         mats.forEach((mat) => {
           mat.side = THREE.DoubleSide;
-          if (mat.color) mat.color.lerp(warmCream, 0.25);
+          // Preserve the GLB material maps and base colors so the ambient
+          // mushroom uses the same cap texture as the original asset.
+          mat.needsUpdate = true;
           mat.transparent = true;
           mat.opacity = 0;
           mat.depthWrite = false;
