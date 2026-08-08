@@ -3,6 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Force light mode: prevents browser dark-mode inference before CSS loads -->
+    <meta name="color-scheme" content="light" />
+    <!-- Critical inline styles: paint the correct background before any external file loads -->
+    <style>html,body{background-color:#faf9f6 !important;color:#1a1c1a;}</style>
     <title>Checkout | Guchhi</title>
     <meta name="robots" content="noindex" />
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -65,7 +69,7 @@
     </script>
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body class="bg-background text-on-background font-body-md relative overflow-x-hidden">
+  <body class="bg-background text-on-background font-body-md relative overflow-x-hidden" style="background-color:#faf9f6;">
     <nav id="site-nav" class="fixed top-0 w-full z-50 bg-background/90 backdrop-blur-md border-b border-outline-variant/20">
       <div class="flex justify-between items-center w-full px-xxl py-md max-w-container-max mx-auto md:px-lg">
         <a class="flex items-center gap-sm md:gap-md" href="index.html">

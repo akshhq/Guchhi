@@ -3,6 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Force light mode: prevents browser dark-mode inference before CSS loads -->
+    <meta name="color-scheme" content="light" />
+    <!-- Critical inline styles: paint the correct background before any external file loads -->
+    <style>html,body{background-color:#faf9f6 !important;color:#1a1c1a;}</style>
     <title>Guchhi - Wild-Foraged Foods</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=Work+Sans:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet" />
@@ -129,7 +133,7 @@
     </script>
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body class="bg-background text-on-background font-body-md relative overflow-x-hidden">
+  <body class="bg-background text-on-background font-body-md relative overflow-x-hidden" style="background-color:#faf9f6;">
     <div id="page-loader" class="page-loader" data-state="visible" role="status" aria-live="polite" aria-label="Loading Guchhi">
       <div class="page-loader-glow" aria-hidden="true"></div>
       <div class="page-loader-mark">
