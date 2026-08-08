@@ -152,7 +152,7 @@ export function createMushroomField({ boxWidth, boxHeight, getBoxMatrixWorld }) 
     }
   }
 
-  const boxWorldPos = new THREE.Vector3();
+  const localPos = new THREE.Vector3();
   const worldPoint = new THREE.Vector3();
   const finalPosition = new THREE.Vector3();
 
@@ -165,9 +165,8 @@ export function createMushroomField({ boxWidth, boxHeight, getBoxMatrixWorld }) 
     const scaleAmount = ease(rangeProgress(scrollProgress, SCROLL_PHASES.mushroomScale.start, SCROLL_PHASES.mushroomScale.end));
     const fadeAmount = ease(rangeProgress(scrollProgress, SCROLL_PHASES.mushroomFade.start, SCROLL_PHASES.mushroomFade.end));
 
-    // Get box world position
+    // Get box matrix world transform
     const boxMatrixWorld = getBoxMatrixWorld();
-    boxWorldPos.setFromMatrixPosition(boxMatrixWorld);
 
     instances.forEach((instance) => {
       const profile = instance.userData.profile;
@@ -185,23 +184,20 @@ export function createMushroomField({ boxWidth, boxHeight, getBoxMatrixWorld }) 
       instance.visible = growthAmount > 0;
       if (!instance.visible) return;
 
-      // Phase 1: Smooth, low-profile trajectory emergence directly AT box top lid mouth (+0.38 world Y)
+      // Phase 1: Emergence directly out of the top face opening of the wooden box
       if (growthAmount < 0.999 || !profile.frozenAnchor) {
-        // Smoothstep interpolation parameter
         const t = growthAmount;
         const smoothT = t * t * (3 - 2 * t);
 
-        // Smooth subtle X dip to left (-X) before expanding outward (+X)
-        const dipX = Math.sin(smoothT * Math.PI) * -0.22;
-        const currentX = boxWorldPos.x + profile.offsetX + dipX;
+        // Local box top face center is at Y = boxHeight / 2 (1.175).
+        // Emergence starts right at top face rim (boxHeight / 2 - 0.05) and ascends straight out of top face.
+        const localX = profile.offsetX * (0.25 + smoothT * 0.45);
+        const localY = (boxHeight / 2 - 0.05) + (smoothT * 1.35) + (Math.sin(smoothT * Math.PI) * 0.12);
+        const localZ = 0.05 + (smoothT * 0.40);
 
-        // Low-profile Y curve starting directly AT the box top lid mouth rim (boxWorldPos.y + 0.78)
-        const currentY = boxWorldPos.y + 0.78 + (smoothT * 0.42) + (Math.sin(smoothT * Math.PI) * 0.08);
-
-        // Smooth forward movement (+Z) out of lid opening
-        const currentZ = boxWorldPos.z + 0.1 + (smoothT * 0.35);
-
-        worldPoint.set(currentX, currentY, currentZ);
+        localPos.set(localX, localY, localZ);
+        // Transform local box top-face coordinate directly to 3D world space
+        worldPoint.copy(localPos).applyMatrix4(boxMatrixWorld);
 
         if (growthAmount >= 0.999) {
           profile.frozenAnchor = worldPoint.clone();

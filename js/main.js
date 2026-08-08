@@ -1,6 +1,7 @@
 import { initRevealObserver } from './animations/reveal.js';
 import { initShaderBackground } from './animations/shaderBackground.js';
 import { initHeroAnimation } from './animations/hero/index.js';
+import { initBackgroundMushroom } from './animations/backgroundMushroom.js';
 import { initNavbar } from './components/navbar.js';
 import { initAccordions } from './components/accordion.js';
 import { initCart } from './cart/cartUI.js';
@@ -9,6 +10,7 @@ function initPage() {
   initRevealObserver();
   initShaderBackground();
   initHeroAnimation();
+  initBackgroundMushroom();
   initNavbar();
   initAccordions('.accordion');
   initCart();
