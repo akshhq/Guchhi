@@ -19,6 +19,7 @@ import {
   MUSHROOM_TARGET_SIZE
 } from './config.js';
 import { ease, rangeProgress, clamp, seededRandom } from './mathUtils.js';
+import { registerAsset } from '../../assetReady.js';
 
 function getResponsiveMushroomCount() {
   const width = window.innerWidth;
@@ -132,16 +133,19 @@ export function createMushroomField({ boxWidth, boxHeight, getBoxMatrixWorld }) 
 
   function load() {
     const loader = new GLTFLoader();
+    const done = registerAsset('morel-glb-hero');
     loader.load(
       ASSET_PATHS.mushroomModel,
       (gltf) => {
         tintModel(gltf.scene);
         fitModel(gltf.scene, MUSHROOM_TARGET_SIZE);
         activateModel(gltf.scene);
+        done();
       },
       undefined,
       (error) => {
         console.warn('Guchhi hero: mushroom model failed to load.', error);
+        done(); // don't block the loader on failure
       }
     );
   }
@@ -219,11 +223,14 @@ export function createMushroomField({ boxWidth, boxHeight, getBoxMatrixWorld }) 
       // Phase 2: travel from the saved launch anchor to the existing scatter
       // target along one shallow quadratic Bezier. It keeps the same start and
       // end positions while providing a gentle outward sweep instead of a rise.
-      const travelAmount = clamp(
-        (scatterAmount - profile.scatterStartAmount) / (1 - profile.scatterStartAmount),
-        0,
-        1
-      );
+      const denominator = 1 - profile.scatterStartAmount;
+      const travelAmount = denominator <= 0
+        ? (scatterAmount >= profile.scatterStartAmount ? 1 : 0)
+        : clamp(
+            (scatterAmount - profile.scatterStartAmount) / denominator,
+            0,
+            1
+          );
 
       if (hasFullyEmerged) {
         const launchPoint = profile.frozenAnchor;
@@ -270,6 +277,15 @@ export function createMushroomField({ boxWidth, boxHeight, getBoxMatrixWorld }) 
       // Opacity calculation
       const opacity = (0.4 + 0.6 * growthAmount) * (1 - fadeAmount);
       setModelOpacity(instance, opacity);
+    });
+  }
+
+  function disposeModel(model) {
+    model.traverse((child) => {
+      if (!child.isMesh) return;
+      child.geometry?.dispose();
+      const mats = Array.isArray(child.material) ? child.material : [child.material];
+      mats.forEach((m) => { m.map?.dispose(); m.dispose(); });
     });
   }
 

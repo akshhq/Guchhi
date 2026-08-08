@@ -91,7 +91,7 @@ async function render() {
       subtotal === 0 ? '—' : shipping === 0 ? 'Free' : formatCurrency(shipping);
   }
 
-  const count = await getItemCount();
+  const count = getItemCount();
   if (els.badge) {
     if (count > 0) {
       els.badge.textContent = String(count);
@@ -176,7 +176,12 @@ function bindAddToCartButtons() {
       const qtyInput = qtyInputId ? document.getElementById(qtyInputId) : null;
       const quantity = qtyInput ? Math.max(1, parseInt(qtyInput.value, 10) || 1) : 1;
 
-      import('../services/cartService.js').then(({ addItem }) => addItem(productId, quantity));
+      try {
+        const { addItem } = await import('../services/cartService.js');
+        await addItem(productId, quantity);
+      } catch (err) {
+        console.warn('[cart] addItem failed:', err);
+      }
 
       const originalText = btn.textContent;
       btn.textContent = 'Added';

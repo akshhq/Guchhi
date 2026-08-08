@@ -22,8 +22,16 @@ export function initShaderBackground() {
   }
   syncSize();
 
+  // Set the canvas background to the site cream so it never shows black
+  // even for the single frame before WebGL boots.
+  canvas.style.background = '#faf9f6';
+
   const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
   if (!gl) return;
+
+  // Clear to site cream (#faf9f6) so there is no black flash on first paint.
+  gl.clearColor(0.98, 0.976, 0.965, 1.0);
+  gl.clear(gl.COLOR_BUFFER_BIT);
 
   const vs = `attribute vec2 a_position;
 varying vec2 v_texCoord;
@@ -98,6 +106,7 @@ void main() {
   function render(t) {
     if (typeof ResizeObserver === 'undefined') syncSize();
     gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.clear(gl.COLOR_BUFFER_BIT);
     if (uTime) gl.uniform1f(uTime, t * 0.001);
     if (uResolution) gl.uniform2f(uResolution, canvas.width, canvas.height);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);

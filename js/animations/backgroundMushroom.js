@@ -12,6 +12,7 @@
 
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { registerAsset } from '../assetReady.js';
 
 let hasInitialized = false;
 
@@ -33,7 +34,8 @@ export function initBackgroundMushroom() {
     document.body.appendChild(canvas);
   }
 
-  const glTest = document.createElement('canvas').getContext('webgl2') || document.createElement('canvas').getContext('webgl');
+  const glTestCanvas = document.createElement('canvas');
+  const glTest = glTestCanvas.getContext('webgl2') || glTestCanvas.getContext('webgl');
   if (!glTest) return;
 
   hasInitialized = true;
@@ -88,6 +90,7 @@ export function initBackgroundMushroom() {
 
   const loader = new GLTFLoader();
   const modelPath = resolveAssetPath('morel_3D_color.glb');
+  const doneBackground = registerAsset('morel-glb-background');
 
   loader.load(
     modelPath,
@@ -104,9 +107,9 @@ export function initBackgroundMushroom() {
       const center = bounds.getCenter(new THREE.Vector3());
       model.position.sub(center.multiplyScalar(scale));
 
-      // TOP VIEW ORIENTATION:
-      // In GLTF, cap is +Y. Rotating X by -Math.PI / 2 points cap directly toward +Z facing user.
-      model.rotation.set(-Math.PI / 2 + 0.15, 0, 0);
+      // UPRIGHT ORIENTATION: cap faces up (+Y), stem faces down.
+      // No base rotation needed — GLTF default Y-up matches the scene.
+      model.rotation.set(0, 0, 0);
 
       model.traverse((child) => {
         if (!child.isMesh) return;
@@ -124,9 +127,10 @@ export function initBackgroundMushroom() {
 
       mushroomGroup.add(model);
       modelLoaded = true;
+      doneBackground();
     },
     undefined,
-    (err) => console.warn('Background mushroom load failed:', err)
+    (err) => { console.warn('Background mushroom load failed:', err); doneBackground(); }
   );
 
   function handleResize() {
@@ -154,13 +158,20 @@ export function initBackgroundMushroom() {
         setModelOpacity(mushroomGroup, currentOpacity);
 
         const elapsedSec = time * 0.001;
-        mushroomGroup.rotation.z = elapsedSec * 0.18;
-        mushroomGroup.rotation.y = Math.sin(elapsedSec * 0.5) * 0.12;
+        // Slow spin on Y axis — keeps mushroom upright, just turns it gently
+        mushroomGroup.rotation.y = elapsedSec * 0.22;
+        // Z axis stays 0 — mushroom remains perfectly vertical at all times
+        mushroomGroup.rotation.z = 0;
 
-        const floatY = Math.sin(elapsedSec * 0.7) * 0.15;
-        const floatX = Math.cos(elapsedSec * 0.5) * 0.10;
+        const floatY = Math.sin(elapsedSec * 0.6) * 0.12;
+        // Wider left-right glide: ±0.28 units, slow period
+        const floatX = Math.sin(elapsedSec * 0.28) * 0.28;
 
         const responsiveX = window.innerWidth < 768 ? 0 : 1.3;
+        const responsiveScale = window.innerWidth < 768 ? 0.55
+          : window.innerWidth < 1024 ? 0.75
+          : 1.0;
+        mushroomGroup.scale.setScalar(responsiveScale);
         mushroomGroup.position.set(responsiveX + floatX, floatY, 0);
 
         renderer.render(scene, camera);

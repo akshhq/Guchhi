@@ -5,6 +5,7 @@ import { initBackgroundMushroom } from './animations/backgroundMushroom.js';
 import { initNavbar } from './components/navbar.js';
 import { initAccordions } from './components/accordion.js';
 import { initCart } from './cart/cartUI.js';
+import { sealAssets } from './assetReady.js';
 
 function initPage() {
   initRevealObserver();
@@ -14,6 +15,10 @@ function initPage() {
   initNavbar();
   initAccordions('.accordion');
   initCart();
+
+  // All modules have had their chance to call registerAsset().
+  // Seal the registry so the asset-ready promise can resolve.
+  sealAssets();
 }
 
 if (document.readyState === 'loading') {

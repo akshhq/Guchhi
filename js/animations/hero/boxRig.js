@@ -8,6 +8,7 @@
 import * as THREE from 'three';
 import { BOX_GEOMETRY, ASSET_PATHS, SCROLL_PHASES } from './config.js';
 import { ease, rangeProgress } from './mathUtils.js';
+import { registerAsset } from '../../assetReady.js';
 
 const FACE_FILES = {
   right: 'right.jpeg',
@@ -21,9 +22,18 @@ const FACE_FILES = {
 function loadBoxMaterials(renderer) {
   const textureLoader = new THREE.TextureLoader();
   const materials = {};
+  const faceEntries = Object.entries(FACE_FILES);
+  const doneTextures = registerAsset('box-textures');
+  let loaded = 0;
+  const total = faceEntries.length;
 
-  Object.entries(FACE_FILES).forEach(([face, fileName]) => {
-    const texture = textureLoader.load(ASSET_PATHS.boxTexture(fileName));
+  faceEntries.forEach(([face, fileName]) => {
+    const texture = textureLoader.load(
+      ASSET_PATHS.boxTexture(fileName),
+      () => { if (++loaded >= total) doneTextures(); },
+      undefined,
+      () => { if (++loaded >= total) doneTextures(); }
+    );
     texture.colorSpace = THREE.SRGBColorSpace;
     texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
     materials[face] = new THREE.MeshStandardMaterial({ map: texture, roughness: 0.62 });
