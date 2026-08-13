@@ -116,12 +116,4 @@ export async function getEstimatedShipping() {
   return subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FLAT_RATE;
 }
 
-/**
- * Coupon validation placeholder. Structured so a real implementation can
- * call POST /api/cart/coupon and return { valid, discount, message }.
- */
-export async function applyCoupon(code) {
-  return { valid: false, discount: 0, message: 'Coupon codes are coming soon.' , code };
-}
-
 export { FREE_SHIPPING_THRESHOLD, SHIPPING_FLAT_RATE };

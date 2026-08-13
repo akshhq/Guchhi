@@ -15,6 +15,8 @@
 import { api } from './apiClient.js';
 import { getCart as getLocalCart, getDetailedCart } from './cartService.js';
 import { resolveBackendProductBySlug } from './productService.js';
+import { getItem as getLocalStorageItem, setItem as setLocalStorageItem } from '../utils/storage.js';
+import { formatCurrency } from '../utils/format.js';
 
 /**
  * Mirrors the local cart into the backend's server-side cart.
@@ -55,6 +57,66 @@ export async function syncServerCart() {
 /** Server-computed totals (subtotal/discount/tax/shipping/total) for the current step's address + coupon. */
 export async function getSummary({ shippingAddress, couponCode } = {}) {
   return api.post('/checkout/summary', { shippingAddress, couponCode });
+}
+
+const APPLIED_COUPON_KEY = 'guchhi:applied-coupon';
+
+/** The coupon code applied from the cart sidebar, if any — used to pre-fill the checkout page's coupon field. */
+export function getAppliedCouponCode() {
+  return getLocalStorageItem(APPLIED_COUPON_KEY, null);
+}
+
+export function clearAppliedCoupon() {
+  setLocalStorageItem(APPLIED_COUPON_KEY, null);
+}
+
+/**
+ * Applies a coupon code to the cart. Coupon rules (validity window,
+ * per-user usage limit, minimum order value, expiry) all live server-side
+ * in backend/src/services/coupon.service.ts — this just surfaces whatever
+ * the server decides.
+ *
+ * Since the server only knows about the server-side cart (see the module
+ * doc above), this syncs the local cart across first so the coupon is
+ * validated against what the shopper actually has in their cart.
+ *
+ * @returns {{ success: boolean, message: string, discount?: number, total?: number }}
+ */
+export async function applyCoupon(code) {
+  if (!code || !code.trim()) {
+    return { success: false, message: 'Enter a coupon code.' };
+  }
+
+  const sync = await syncServerCart();
+  if (!sync.ok) {
+    return { success: false, message: 'Could not reach the server to apply this coupon. Please try again.' };
+  }
+
+  try {
+    const result = await api.post('/cart/coupon', { code: code.trim() });
+    setLocalStorageItem(APPLIED_COUPON_KEY, code.trim());
+    window.dispatchEvent(new CustomEvent('cart:updated', {}));
+    return {
+      success: true,
+      message: `Coupon applied — you saved ${formatCurrency(result.cart.discount)}.`,
+      discount: result.cart.discount,
+      total: result.cart.total,
+    };
+  } catch (err) {
+    return { success: false, message: err.message || 'Could not apply that coupon.' };
+  }
+}
+
+export async function removeCoupon() {
+  clearAppliedCoupon();
+  try {
+    await api.delete('/cart/coupon');
+  } catch {
+    // If the server cart doesn't have a coupon applied (e.g. it was never
+    // synced), there's nothing to remove server-side — that's fine, the
+    // local applied-coupon flag above is already cleared either way.
+  }
+  window.dispatchEvent(new CustomEvent('cart:updated', {}));
 }
 
 /** Step 1 of the Razorpay flow: creates a Razorpay order + a server-side checkout snapshot. */

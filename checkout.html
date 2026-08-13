@@ -80,8 +80,23 @@
           <span class="material-symbols-outlined text-[18px]" aria-hidden="true">arrow_back</span>
           Continue shopping
         </a>
+        <button type="button" class="relative text-primary" data-account-open aria-label="Account">
+          <span class="material-symbols-outlined" aria-hidden="true">person</span>
+        </button>
       </div>
     </nav>
+
+    <!-- Account System -->
+    <div id="account-overlay" class="account-overlay" data-account-close></div>
+    <aside id="account-sidebar" class="account-sidebar" aria-hidden="true" aria-label="Your account">
+      <div class="account-sidebar-header">
+        <h2 class="font-headline-sm text-headline-sm text-primary">Your Account</h2>
+        <button type="button" class="text-primary" data-account-close aria-label="Close account panel">
+          <span class="material-symbols-outlined" aria-hidden="true">close</span>
+        </button>
+      </div>
+      <div class="account-sidebar-body" id="account-sidebar-body"></div>
+    </aside>
 
     <main class="pt-32 pb-xxl px-lg max-w-container-max mx-auto min-h-screen">
       <header class="mb-xl text-center">
@@ -283,5 +298,11 @@
 
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script type="module" src="js/checkout/checkoutFlow.js"></script>
+    <script type="module">
+      import { initBackgroundMushroom } from './js/animations/backgroundMushroom.js';
+      import { initAccount } from './js/account/accountUI.js';
+      initBackgroundMushroom();
+      initAccount();
+    </script>
   </body>
 </html>

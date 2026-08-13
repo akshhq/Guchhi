@@ -5,7 +5,7 @@
  *
  * Key features:
  * - Orientation: Z-axis facing user displays top view (cap facing camera).
- * - Low opacity: 0.10 translucency to serve as an elegant ambient detail.
+ * - Low opacity: 0.06 translucency to serve as an elegant ambient detail.
  * - Rotates continuously on its top-view axis.
  * - Section control: Fades out in Hero section, fades in when scrolled into rest of sections.
  */
@@ -64,7 +64,7 @@ export function initBackgroundMushroom() {
   scene.add(mushroomGroup);
 
   let modelLoaded = false;
-  const TARGET_OPACITY = 0.10;
+  const TARGET_OPACITY = 0.06;
   let currentOpacity = 0;
   let isHeroVisible = false;
 

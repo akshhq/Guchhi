@@ -62,11 +62,49 @@ export class ApiError extends Error {
 }
 
 /**
+ * Access tokens expire quickly (15 min — see backend JWT_ACCESS_EXPIRES_IN).
+ * The backend issues a long-lived refresh token as an httpOnly cookie
+ * (see auth.controller.ts setRefreshCookie), scoped to /api/auth, so it's
+ * sent automatically by fetch's `credentials: 'include'` — this function
+ * never touches it directly.
+ *
+ * Concurrency note: if several requests 401 around the same moment (e.g.
+ * a page loads and fires 3 authenticated calls right as the token expires),
+ * they must not each trigger their own refresh — that would race the
+ * refresh token's single-use rotation on the backend and log the second
+ * caller out. `refreshPromise` makes every concurrent 401 await the same
+ * in-flight refresh call instead.
+ */
+let refreshPromise = null;
+
+async function refreshAccessToken() {
+  if (!refreshPromise) {
+    refreshPromise = fetch(`${API_BASE_URL}/auth/refresh-token`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then(async (response) => {
+        if (!response.ok) return null;
+        const body = await response.json().catch(() => null);
+        const token = body?.data?.accessToken ?? null;
+        if (token) setAccessToken(token);
+        return token;
+      })
+      .catch(() => null)
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+  return refreshPromise;
+}
+
+/**
  * @param {string} path e.g. '/cart/items'
  * @param {RequestInit & { auth?: boolean }} options
  */
 export async function apiFetch(path, options = {}) {
-  const { auth = true, headers, ...rest } = options;
+  const { auth = true, headers, _isRetry, ...rest } = options;
 
   const requestHeaders = {
     'Content-Type': 'application/json',
@@ -91,6 +129,22 @@ export async function apiFetch(path, options = {}) {
     // misconfigured, etc.) — surface a message the UI can show directly
     // rather than a raw "Failed to fetch".
     throw new ApiError('Could not reach the server. Please check your connection and try again.', 0);
+  }
+
+  // A 401 on an authenticated request most likely means the access token
+  // expired mid-session — try exactly once to refresh it and replay the
+  // request before giving up and treating this as a real auth failure.
+  // Requests made with `auth: false` (login/signup/etc.) are never retried
+  // this way, since a 401 there means the credentials were actually wrong.
+  if (response.status === 401 && auth && getAccessToken() && !_isRetry) {
+    const newToken = await refreshAccessToken();
+    if (newToken) {
+      return apiFetch(path, { ...options, _isRetry: true });
+    }
+    // Refresh failed too (refresh token expired/revoked) — the session is
+    // genuinely over. Clear the stale access token so the UI stops
+    // pretending the person is signed in.
+    clearAccessToken();
   }
 
   let body = null;

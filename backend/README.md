@@ -168,31 +168,38 @@ any non-local environment.
 
 ### 5. Explore the API
 - Swagger UI: `http://localhost:4000/api-docs`
-- Health check: `GET http://localhost:4000/api/health`
+- Health check: `GET http://localhost:4000/api/v1/health` (checks DB + Redis connectivity;
+  the `/v1` comes from the default `API_PREFIX` in `.env.example` — adjust if you changed it)
 
 ---
 
 ## Connecting the existing frontend
 
-The frontend's `js/services/*.js` files already define the shape of `cartService`,
-`productService`, `checkoutService`, `authService`, `wishlistService`. Point their base URL
-at this API (e.g. `http://localhost:4000/api`) and:
+The frontend already talks to this API for real — see the root `README.md` and
+`js/services/{authService,cartService,checkoutService,productService}.js` and
+`js/services/apiClient.js`. In short:
 
-- Send `Authorization: Bearer <accessToken>` once logged in.
-- For guest shopping, generate and persist a UUID in `localStorage` (the frontend's existing
-  `storage.js` pattern) and send it as `x-guest-id` on cart/checkout requests. It's dropped
-  automatically once the guest logs in or signs up (their cart is merged).
-- Refresh tokens are delivered as an `httpOnly` cookie scoped to `/api/auth` — no frontend
-  code needs to handle it directly beyond calling `POST /api/auth/refresh-token` when a
-  request comes back `401`.
-
-No HTML/CSS/JS was generated or modified as part of this backend — by design.
+- Base URL defaults to `http://localhost:4000/api/v1` on the frontend side
+  (`apiClient.js::API_BASE_URL`), matching this backend's own default `API_PREFIX`.
+- `Authorization: Bearer <accessToken>` is sent automatically once logged in, and
+  `apiClient.js` transparently calls `POST /api/v1/auth/refresh-token` and retries on a
+  `401` before giving up — no per-call code needed for that.
+- For guest shopping, the frontend generates and persists a UUID in `localStorage` and
+  sends it as `x-guest-id` on cart/checkout requests. It's dropped automatically once the
+  guest logs in or signs up (their cart is merged — see `CartService.mergeGuestCart`,
+  called from both `signup` and `login` in `auth.controller.ts`).
+- Refresh tokens are delivered as an `httpOnly` cookie scoped to `${API_PREFIX}/auth`
+  (i.e. `/api/v1/auth` by default — **not** a hardcoded `/api/auth`; the cookie path is
+  derived from `env.API_PREFIX` in `auth.controller.ts` specifically so it can't drift out
+  of sync if the API version changes). No frontend code needs to read this cookie directly.
 
 ---
 
 ## API Endpoint Overview
 
-All routes are prefixed with `/api`.
+All routes are prefixed with `API_PREFIX` (`/api/v1` by default), **except** the Razorpay
+webhook, which is intentionally kept outside versioning since a webhook URL configured in
+the Razorpay dashboard should stay stable across API versions.
 
 | Module | Base path | Highlights |
 |---|---|---|
@@ -206,6 +213,7 @@ All routes are prefixed with `/api`.
 | Wishlist | `/wishlist` | list, add, remove, move-to-cart |
 | Addresses | `/addresses` | CRUD for a logged-in user's saved addresses |
 | Admin | `/admin/*` | dashboard, sales analytics, top products, customers, coupons, inventory (low-stock, logs, adjustments) |
+| Webhooks | `/webhooks/razorpay` (unversioned, mounted directly on the app) | Razorpay payment webhook — HMAC-verified against the raw request body |
 
 Full request/response contracts (including Zod-validated bodies) are in Swagger at
 `/api-docs`, and readable directly in `src/validators/*.ts` and `src/routes/**/*.ts`.
@@ -221,11 +229,38 @@ Full request/response contracts (including Zod-validated bodies) are in Swagger 
 4. **Set environment variables** from `.env.example` in your host's secret manager —
    especially `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, `RAZORPAY_KEY_SECRET`.
 5. **Point `ALLOWED_ORIGINS`** at the production frontend origin(s).
-6. **Health check**: configure your platform's health check against `GET /api/health`
+6. **Health check**: configure your platform's health check against `GET /api/v1/health`
    (checks DB + Redis connectivity, returns `503` if either is down).
 7. **CI**: `.github/workflows/ci.yml` installs deps, generates the Prisma client, runs
    migrations against an ephemeral Postgres service, lints, builds, and builds the Docker
    image on every push/PR. Wire a deploy job on top of it for your target platform.
+
+---
+
+## Testing
+
+`src/__tests__/` has Vitest + Supertest integration tests covering:
+- The checkout flow: COD happy path (stock decrement, cart clearing), oversell rejection,
+  guest-checkout email requirement, coupon discount math, Razorpay signature
+  verification (including rejecting a forged signature and rejecting a replayed
+  `verify-payment` call).
+- Guest-cart merge on login (including capping the merged quantity at real stock rather
+  than overselling) and coupon edge cases (unknown code, below minimum order value,
+  expired, per-user usage limit already reached, percentage discount capped at
+  `maxDiscountAmount`).
+
+They run against a real, disposable Postgres database — never point them at dev or prod
+data, since the test setup truncates tables between tests. One-time setup:
+
+```bash
+createdb guchhi_test
+npx prisma generate
+DATABASE_URL=postgresql://guchhi:guchhi@localhost:5432/guchhi_test npx prisma migrate deploy
+```
+
+Then: `npm test` (or `npm run test:watch`). `src/__tests__/helpers/setupEnv.ts` forces
+`DATABASE_URL` to a `_test`-suffixed database as a safety net even if `.env` isn't pointed
+there directly.
 
 ---
 

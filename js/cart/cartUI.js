@@ -11,9 +11,9 @@ import {
   getItemCount,
   updateQuantity,
   removeItem,
-  applyCoupon,
   FREE_SHIPPING_THRESHOLD
 } from '../services/cartService.js';
+import { applyCoupon, removeCoupon, getAppliedCouponCode } from '../services/checkoutService.js';
 import { formatCurrency } from '../utils/format.js';
 
 const FALLBACK_IMAGE = new URL('../../media/logo.jpg', import.meta.url).href;
@@ -31,6 +31,8 @@ function cacheElements() {
     emptyState: document.getElementById('cart-empty-state'),
     subtotalEl: document.getElementById('cart-subtotal'),
     shippingEl: document.getElementById('cart-shipping'),
+    discountRow: document.getElementById('cart-discount-row'),
+    discountEl: document.getElementById('cart-discount'),
     couponInput: document.getElementById('cart-coupon-input'),
     couponApply: document.getElementById('cart-coupon-apply'),
     couponMessage: document.getElementById('cart-coupon-message'),
@@ -91,6 +93,8 @@ async function render() {
       subtotal === 0 ? '—' : shipping === 0 ? 'Free' : formatCurrency(shipping);
   }
 
+  await renderCoupon(lines.length);
+
   const count = getItemCount();
   if (els.badge) {
     if (count > 0) {
@@ -99,6 +103,43 @@ async function render() {
     } else {
       els.badge.classList.add('hidden');
     }
+  }
+}
+
+/**
+ * Re-validates the applied coupon (if any) against the current cart and
+ * shows/hides the discount row. Called on every render so quantity changes
+ * that push the cart below a coupon's minimum order value are reflected
+ * immediately, not just at checkout.
+ */
+async function renderCoupon(itemCount) {
+  const code = getAppliedCouponCode();
+  if (!code || itemCount === 0) {
+    if (els.discountRow) els.discountRow.style.display = 'none';
+    if (els.couponInput) els.couponInput.value = '';
+    return;
+  }
+
+  if (els.couponInput) els.couponInput.value = code;
+
+  const { getSummary } = await import('../services/checkoutService.js');
+  try {
+    const summary = await getSummary({ couponCode: code });
+    if (summary.discount > 0 && els.discountRow && els.discountEl) {
+      els.discountRow.style.display = '';
+      els.discountEl.textContent = `−${formatCurrency(summary.discount)}`;
+      if (els.couponMessage) {
+        els.couponMessage.innerHTML = `"${code}" applied. <button type="button" id="cart-coupon-remove" class="underline">Remove</button>`;
+      }
+    } else if (els.discountRow) {
+      // Coupon no longer qualifies (e.g. cart dropped below its minimum,
+      // or it expired) — hide the row but leave the code in the input so
+      // the person can see what stopped applying.
+      els.discountRow.style.display = 'none';
+      if (els.couponMessage) els.couponMessage.textContent = `"${code}" no longer applies to this cart.`;
+    }
+  } catch {
+    if (els.discountRow) els.discountRow.style.display = 'none';
   }
 }
 
@@ -149,8 +190,31 @@ function bindEvents() {
   els.couponApply?.addEventListener('click', async () => {
     const code = els.couponInput?.value?.trim();
     if (!code) return;
+
+    const originalLabel = els.couponApply.textContent;
+    els.couponApply.textContent = '...';
+    els.couponApply.disabled = true;
+    if (els.couponMessage) {
+      els.couponMessage.textContent = '';
+      els.couponMessage.style.color = '';
+    }
+
     const result = await applyCoupon(code);
-    if (els.couponMessage) els.couponMessage.textContent = result.message;
+
+    els.couponApply.textContent = originalLabel;
+    els.couponApply.disabled = false;
+
+    if (els.couponMessage) {
+      els.couponMessage.style.color = result.success ? '#3f6b3f' : '#a3402c';
+      els.couponMessage.textContent = result.message;
+    }
+    if (result.success) render();
+  });
+
+  els.couponMessage?.addEventListener('click', async (event) => {
+    if (event.target.id !== 'cart-coupon-remove') return;
+    await removeCoupon();
+    render();
   });
 
   els.checkoutBtn?.addEventListener('click', () => {

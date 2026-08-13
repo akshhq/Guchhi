@@ -99,6 +99,9 @@
           <a href="tel:+919871520888" class="hidden md:inline font-label-caps uppercase tracking-widest text-[11px] text-secondary border border-secondary/40 rounded-full px-sm py-xs hover:bg-secondary hover:text-on-secondary transition-colors">
             Trade Enquiry
           </a>
+          <button type="button" class="relative text-primary" data-account-open aria-label="Account">
+            <span class="material-symbols-outlined" aria-hidden="true">person</span>
+          </button>
           <button type="button" class="relative text-primary" data-cart-open aria-label="Open cart, 0 items">
             <span class="material-symbols-outlined" aria-hidden="true">shopping_bag</span>
             <span id="cart-badge" class="cart-badge hidden">0</span>
@@ -166,7 +169,7 @@
           </div>
           <div class="md:col-span-7 reveal-element" style="transition-delay: 120ms;">
             <div class="relative h-[560px] tactile-border rounded-xl overflow-hidden bg-surface-container-low">
-              <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('../media/rajma.jpg')"></div>
+              <div class="absolute inset-0 bg-cover bg-center" role="img" aria-label="Bharmour Rajma kidney beans in a wooden bowl" style="background-image: url('../media/rajma.jpg')"></div>
               <div class="absolute inset-x-0 bottom-0 p-lg bg-gradient-to-t from-primary/70 to-transparent text-on-primary">
                 <p class="font-label-caps uppercase tracking-widest text-secondary-fixed mb-xs">Smallholder dryland plots</p>
                 <p class="font-body-md max-w-xl">Salt late, braise slowly, and let the bean turn creamy inside.</p>
@@ -176,7 +179,7 @@
         </div>
       </section>
 
-      <section class="px-lg py-xxl bg-surface-container-low border-y border-outline-variant/20">
+      <section class="px-lg py-xxl bg-surface-container-low/95 border-y border-outline-variant/20">
         <div class="max-w-container-max mx-auto grid grid-cols-1 md:grid-cols-3 gap-lg reveal-element">
           <div class="tactile-border rounded-xl p-lg bg-surface-container-lowest">
             <p class="font-label-caps text-outline-variant uppercase tracking-widest mb-sm">Origin</p>
@@ -215,11 +218,11 @@
         </div>
       </section>
 
-      <section class="px-lg py-xxl bg-surface-container-low">
+      <section class="px-lg py-xxl bg-surface-container-low/95">
         <div class="max-w-container-max mx-auto grid grid-cols-1 md:grid-cols-12 gap-lg items-center reveal-element">
           <div class="md:col-span-5">
             <div class="relative h-[420px] tactile-border rounded-xl overflow-hidden">
-              <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('../media/chamba_valley.jpg')"></div>
+              <div class="absolute inset-0 bg-cover bg-center" role="img" aria-label="Misty mountain valley landscape in the Himalayas" style="background-image: url('../media/chamba_valley.jpg')"></div>
             </div>
           </div>
           <div class="md:col-span-7 space-y-md">
@@ -275,6 +278,10 @@
           <span>Subtotal</span>
           <span id="cart-subtotal">₹0</span>
         </div>
+        <div class="cart-summary-row" id="cart-discount-row" style="display:none;">
+          <span>Discount</span>
+          <span id="cart-discount">−₹0</span>
+        </div>
         <div class="cart-summary-row">
           <span>Estimated shipping</span>
           <span id="cart-shipping">—</span>
@@ -283,6 +290,18 @@
           Checkout
         </button>
       </div>
+    </aside>
+
+    <!-- Account System -->
+    <div id="account-overlay" class="account-overlay" data-account-close></div>
+    <aside id="account-sidebar" class="account-sidebar" aria-hidden="true" aria-label="Your account">
+      <div class="account-sidebar-header">
+        <h2 class="font-headline-sm text-headline-sm text-primary">Your Account</h2>
+        <button type="button" class="text-primary" data-account-close aria-label="Close account panel">
+          <span class="material-symbols-outlined" aria-hidden="true">close</span>
+        </button>
+      </div>
+      <div class="account-sidebar-body" id="account-sidebar-body"></div>
     </aside>
 
     <script type="importmap">

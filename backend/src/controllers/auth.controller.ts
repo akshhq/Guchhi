@@ -7,6 +7,13 @@ import { CartService } from '../services/cart.service';
 
 const REFRESH_COOKIE = 'refreshToken';
 
+// Must match the actual mounted path of the auth routes (API_PREFIX + '/auth',
+// e.g. '/api/v1/auth') — not just '/api/auth'. A cookie's `path` attribute
+// has to be a literal prefix of the request path for the browser to send it
+// back, so a mismatch here (even a versioning change) silently breaks the
+// refresh-token and logout flows: the cookie gets set but never sent again.
+const REFRESH_COOKIE_PATH = `${env.API_PREFIX}/auth`;
+
 function setRefreshCookie(res: Response, token: string) {
   res.cookie(REFRESH_COOKIE, token, {
     httpOnly: true,
@@ -14,7 +21,7 @@ function setRefreshCookie(res: Response, token: string) {
     sameSite: 'lax',
     domain: env.COOKIE_DOMAIN,
     maxAge: 30 * 24 * 60 * 60 * 1000,
-    path: '/api/auth',
+    path: REFRESH_COOKIE_PATH,
   });
 }
 
@@ -43,7 +50,7 @@ export const login = catchAsync(async (req: Request, res: Response) => {
 export const logout = catchAsync(async (req: Request, res: Response) => {
   const token = req.cookies?.[REFRESH_COOKIE];
   await AuthService.logout(token);
-  res.clearCookie(REFRESH_COOKIE, { path: '/api/auth' });
+  res.clearCookie(REFRESH_COOKIE, { path: REFRESH_COOKIE_PATH });
   sendSuccess(res, {}, 'Logged out successfully');
 });
 

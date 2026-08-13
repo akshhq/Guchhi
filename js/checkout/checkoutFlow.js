@@ -6,7 +6,7 @@
  */
 
 import { getDetailedCart, clearCart, FREE_SHIPPING_THRESHOLD } from '../services/cartService.js';
-import { syncServerCart, getSummary, createRazorpayOrder, verifyPayment, createCodOrder } from '../services/checkoutService.js';
+import { syncServerCart, getSummary, createRazorpayOrder, verifyPayment, createCodOrder, getAppliedCouponCode, clearAppliedCoupon } from '../services/checkoutService.js';
 import { getAccessToken } from '../services/apiClient.js';
 import { formatCurrency } from '../utils/format.js';
 
@@ -262,6 +262,7 @@ function resetPlaceOrderButton() {
 
 function onOrderPlaced(order) {
   clearCart();
+  clearAppliedCoupon();
   els.successNumber.textContent = order.orderNumber;
   state.step = 'success';
   els.stepper?.classList.add('hidden');
@@ -325,6 +326,15 @@ async function init() {
   renderCartLines(els.cartLines, state.lines);
   renderSummarySidebar();
   bindNavigation();
+
+  // Carry over whatever coupon was applied in the cart sidebar so the
+  // shopper doesn't have to re-type it here.
+  const carriedCoupon = getAppliedCouponCode();
+  if (carriedCoupon) {
+    state.couponCode = carriedCoupon;
+    if (els.couponInput) els.couponInput.value = carriedCoupon;
+  }
+
   await goToStep('cart');
 
   const { unavailable } = await syncServerCart();
