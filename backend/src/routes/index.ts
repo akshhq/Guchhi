@@ -8,6 +8,7 @@ import orderRoutes from './order.routes';
 import reviewRoutes from './review.routes';
 import wishlistRoutes from './wishlist.routes';
 import addressRoutes from './address.routes';
+import contactRoutes from './contact.routes';
 import adminRoutes from './admin';
 import { healthCheck } from '../controllers/health.controller';
 
@@ -24,6 +25,7 @@ router.use('/orders', orderRoutes);
 router.use('/reviews', reviewRoutes);
 router.use('/wishlist', wishlistRoutes);
 router.use('/addresses', addressRoutes);
+router.use('/contact', contactRoutes);
 router.use('/admin', adminRoutes);
 
 export default router;

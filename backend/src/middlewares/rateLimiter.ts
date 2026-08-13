@@ -24,3 +24,11 @@ export const otpLimiter = rateLimit({
   legacyHeaders: false,
   message: { success: false, message: 'Too many requests. Try again in a few minutes.', errors: [] },
 });
+
+export const contactLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Too many enquiries submitted. Please try again later.', errors: [] },
+});

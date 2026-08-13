@@ -47,6 +47,10 @@ const envSchema = z
     SMTP_USER: z.string().optional().default(''),
     SMTP_PASS: z.string().optional().default(''),
     EMAIL_FROM: z.string().default('Guchhi <no-reply@guchhi.com>'),
+    // Where trade/bulk enquiry form submissions are sent — see
+    // controllers/contact.controller.ts. Defaults to the address already
+    // shown in the site footer.
+    CONTACT_NOTIFY_EMAIL: z.string().email().default('hello@guchhi.in'),
 
     TAX_RATE_PERCENT: z.coerce.number().min(0).max(100).default(5),
     FREE_SHIPPING_THRESHOLD: z.coerce.number().min(0).default(1500),

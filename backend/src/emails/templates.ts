@@ -31,3 +31,31 @@ export const shippingUpdateEmail = (name: string, orderNumber: string, status: s
 
 export const invoiceEmail = (name: string, orderNumber: string) =>
   wrapper('Your Invoice', `<p>Hi ${name},</p><p>Please find attached the invoice for your order <strong>${orderNumber}</strong>.</p>`);
+
+/** Sent to the business (env.CONTACT_NOTIFY_EMAIL) when someone submits the trade/bulk enquiry form. */
+export const tradeEnquiryNotification = (input: {
+  name: string;
+  email: string;
+  phone?: string;
+  company?: string;
+  message: string;
+}) =>
+  wrapper(
+    'New Trade Enquiry',
+    `<p>New enquiry from the website contact form:</p>
+     <p><strong>Name:</strong> ${input.name}<br/>
+     <strong>Email:</strong> ${input.email}<br/>
+     ${input.phone ? `<strong>Phone:</strong> ${input.phone}<br/>` : ''}
+     ${input.company ? `<strong>Company:</strong> ${input.company}<br/>` : ''}</p>
+     <p><strong>Message:</strong></p>
+     <p style="white-space:pre-wrap;">${input.message}</p>`
+  );
+
+/** Sent back to the person who submitted the enquiry, confirming receipt. */
+export const tradeEnquiryConfirmation = (name: string) =>
+  wrapper(
+    "We've received your enquiry",
+    `<p>Hi ${name},</p>
+     <p>Thanks for reaching out to Guchhi. We've received your enquiry and one of our team
+     will get back to you shortly.</p>`
+  );
